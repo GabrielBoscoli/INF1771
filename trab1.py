@@ -32,7 +32,8 @@ def inicializaMapa(file, dificuldade):
     for i in range(LINHAS):
         linha = file.readline()
         for j in range(COLUNAS):
-            mapa[i][j] = dificuldade.get(linha[j])
+            #mapa[i][j] = dificuldade.get(linha[j])
+            mapa[i][j] = linha[j]
     return mapa
         
 # O parâmetro 'dificuldade' deve ser uma lista com 3 inteiros

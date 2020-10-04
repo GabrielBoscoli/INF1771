@@ -8,6 +8,9 @@ INF1771 - Inteligência Artificial
 Trabalho 1 - Busca Heurística e Busca Local
 """
 
+import interface
+from time import sleep
+
 # Dimensões do mapa
 LINHAS = 42
 COLUNAS = 42
@@ -81,8 +84,13 @@ def leDadosConfiguraveis():
 
 def main():
     mapa, dificuldadeCasas, poderCosmico = leDadosConfiguraveis()
+    #interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
+    #interface.setGrid(mapa)
+    #interface.desenhaGrid()
     print(mapa)
     print(dificuldadeCasas)
     print(poderCosmico)
+    sleep(10)
+    interface.fechaInterface()
     
 main()

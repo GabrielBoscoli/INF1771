@@ -41,11 +41,11 @@ def desenhaGrid():
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
             
-def initPygame(width, height, title):
+def inicializaInterface(linhas, colunas, title):
     # Initialize pygame
     pygame.init()
     # Set the HEIGHT and WIDTH of the screen
-    window_size = [width, height]
+    window_size = [linhas * WIDTH + (linhas + 1) * MARGIN, colunas * HEIGHT + (colunas + 1) * MARGIN]
     global SCREEN
     SCREEN = pygame.display.set_mode(window_size)
     # Set the screen background
@@ -53,7 +53,7 @@ def initPygame(width, height, title):
     # Set title of screen
     pygame.display.set_caption(title)
 
-def quitPygame():
+def fechaInterface():
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()

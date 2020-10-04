@@ -1,0 +1,12 @@
+usar o algoritmo a-estrela. imagino q usando a distancia de manhatan como heuristica.
+para a escolha dos cavaleiros nas batalhas, usar algum outro algoritmo.
+
+repositorios:
+
+https://github.com/hugogrochau/ai-heuristic-search
+
+https://github.com/stephaniefay/INF1771
+
+https://github.com/marcelopaulon/PUC-Rio-INF1771-Artificial-Intelligence/tree/master/INF1771-T1/src
+
+n eh do trab mas eh legal -> https://github.com/GabrielHeffer/INF1771-IA

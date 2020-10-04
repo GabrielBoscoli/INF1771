@@ -85,13 +85,13 @@ def leDadosConfiguraveis():
 
 def main():
     mapa, dificuldadeCasas, poderCosmico = leDadosConfiguraveis()
-    #interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
-    #interface.setGrid(mapa)
-    #interface.desenhaGrid()
+    interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
+    interface.setGrid(mapa)
+    interface.desenhaGrid()
     print(mapa)
     print(dificuldadeCasas)
     print(poderCosmico)
-    sleep(10)
+    sleep(20)
     interface.fechaInterface()
     
 main()

@@ -15,6 +15,9 @@ from time import sleep
 LINHAS = 42
 COLUNAS = 42
 
+# Coordenada da casa final
+CASA_FINAL = (4, 37)
+
 # Retorna uma matriz linhasXcolunas com 0 em todas as posições
 def inicializaMatriz(linhas, colunas):
     mapa = []
@@ -83,14 +86,26 @@ def leDadosConfiguraveis():
     f.close()
     return mapa, dificuldadeCasas, poderCosmico
 
+# Calcula a distancia de manhattan de cada uma das casas dos mapa em relação ao objetivo
+# Retorna uma matriz LINHAS X COLUNAS em que cada elemento representa sua distancia até o objetivo
+def calculaDistancia():
+    manhattan = []
+    for i in range(LINHAS):
+        manhattan.append([])
+        for j in range(COLUNAS):
+            manhattan[i].append(abs(i - CASA_FINAL[0]) + abs(j - CASA_FINAL[1]))
+    return manhattan
+
 def main():
     mapa, dificuldadeCasas, poderCosmico = leDadosConfiguraveis()
+    manhattan = calculaDistancia()
     interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
     interface.setGrid(mapa)
     interface.desenhaGrid()
     print(mapa)
     print(dificuldadeCasas)
     print(poderCosmico)
+    print(manhattan)
     sleep(20)
     interface.fechaInterface()
     

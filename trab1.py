@@ -202,6 +202,7 @@ def aStar(mapa, dificuldade, manhattan):
                 continue;
             else:
                 #print("push")
+                interface.pintaPosicao(proximo.coords[0], proximo.coords[1], (255, 0, 0))
                 heappush(openList, proximo)
         closedList.append(q)
     return None
@@ -216,10 +217,10 @@ def main():
     print(dificuldadeCasas)
     print(poderCosmico)
     print(manhattan)
-    #print(aStar(mapa, dificuldadeCasas, manhattan))
-    sleep(10)
-    interface.pintaPosicao(21, 21, (255, 0, 0))
-    sleep(10)
+    print(aStar(mapa, dificuldadeCasas, manhattan))
+    #sleep(10)
+    #interface.pintaPosicao(21, 21, (255, 0, 0))
+    #sleep(10)
     interface.fechaInterface()
     
 main()

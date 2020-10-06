@@ -113,12 +113,15 @@ class Node:
     
     def __eq__(self, other):
         return self.coords == other.coords
+    
+    def __str__(self):
+        return "coordenadas" + str(self.coords)
 
 def noValido(linha, coluna):
     return (linha >= 0 and linha < LINHAS) and (coluna >= 0 and coluna < COLUNAS)
 
 # Retorna uma lista de nós vizinhos da casa
-def getVizinhos(node, dificuldade, manhattan):
+def getVizinhos(node, mapa, dificuldade, manhattan):
     vizinhos = []
     coords = node.coords
     x = coords[0]
@@ -126,52 +129,52 @@ def getVizinhos(node, dificuldade, manhattan):
     if noValido(x - 1, y):
         xx = x - 1
         yy = y
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x - 1, y + 1):
         xx = x - 1
         yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x, y + 1):
         xx = x
         yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x + 1, y + 1):
         xx = x + 1
         yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x + 1, y):
         xx = x + 1
         yy = y
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x + 1, y - 1):
         xx = x + 1
         yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x, y - 1):
         xx = x
         yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     if noValido(x - 1, y - 1):
         xx = x - 1
         yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade[node.coords[0]][node.coords[1]],
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
     return vizinhos
 
-# Checa se existe no com mesmas coordenadas na lista que possuam 'f' menor
+# Checa se existe nó com mesmas coordenadas na lista que possuam 'f' menor
 def checkNode(lista, node):
     for e in lista:
         if e == node:
             if e.f < node.f:
-                return e
-    return None
+                return True
+    return False
 
 # algoritmo baseado em https://brilliant.org/wiki/a-star-search/
 # principalmente -> https://www.geeksforgeeks.org/a-search-algorithm/
@@ -182,33 +185,39 @@ def aStar(mapa, dificuldade, manhattan):
     heappush(openList, node)
     closedList = []
     while(len(openList) > 0):
+        #print("while")
         q = heappop(openList)
-        vizinhos = getVizinhos()
+        #print(q)
+        vizinhos = getVizinhos(q, mapa, dificuldade, manhattan)
         for proximo in vizinhos:
+            #print(proximo)
             if proximo.coords == CASA_FINAL:
                 coords = proximo.coords
                 # acho que tem que pegar a dificuldade do q, nao do proximo
-                proximo.g = q.g + dificuldade.get(mapa[coords[0]][coords[1]])
+                proximo.g = q.g + dificuldade.get(mapa[q.coords[0]][q.coords[1]])
                 proximo.h = manhattan(mapa[coords[0]][coords[1]])
                 proximo.f = proximo.g + proximo.f
                 return proximo
-            if checkNode(openList, proximo) == None and checkNode(closedList, proximo) == None:
+            if checkNode(openList, proximo) or checkNode(closedList, proximo):
                 continue;
             else:
+                #print("push")
                 heappush(openList, proximo)
         closedList.append(q)
+    return None
 
 def main():
     mapa, dificuldadeCasas, poderCosmico = leDadosConfiguraveis()
     manhattan = calculaDistancia()
-    interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
-    interface.setGrid(mapa)
-    interface.desenhaGrid()
+    #interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
+    #interface.setGrid(mapa)
+    #interface.desenhaGrid()
     print(mapa)
     print(dificuldadeCasas)
     print(poderCosmico)
     print(manhattan)
-    sleep(20)
-    interface.fechaInterface()
+    print(aStar(mapa, dificuldadeCasas, manhattan))
+    #sleep(20)
+    #interface.fechaInterface()
     
 main()

@@ -115,7 +115,7 @@ class Node:
         return self.coords == other.coords
     
     def __str__(self):
-        return "coordenadas" + str(self.coords)
+        return "coordenadas" + str(self.coords) + ". f: " + str(self.f) + "."
 
 def noValido(linha, coluna):
     return (linha >= 0 and linha < LINHAS) and (coluna >= 0 and coluna < COLUNAS)
@@ -131,18 +131,8 @@ def getVizinhos(node, mapa, dificuldade, manhattan):
         yy = y
         vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
-    if noValido(x - 1, y + 1):
-        xx = x - 1
-        yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
     if noValido(x, y + 1):
         xx = x
-        yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
-    if noValido(x + 1, y + 1):
-        xx = x + 1
         yy = y + 1
         vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
@@ -151,18 +141,8 @@ def getVizinhos(node, mapa, dificuldade, manhattan):
         yy = y
         vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
-    if noValido(x + 1, y - 1):
-        xx = x + 1
-        yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
     if noValido(x, y - 1):
         xx = x
-        yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
-    if noValido(x - 1, y - 1):
-        xx = x - 1
         yy = y - 1
         vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
                              manhattan[xx][yy]))
@@ -172,7 +152,7 @@ def getVizinhos(node, mapa, dificuldade, manhattan):
 def checkNode(lista, node):
     for e in lista:
         if e == node:
-            if e.f < node.f:
+            if e.f <= node.f:
                 return True
     return False
 
@@ -185,6 +165,7 @@ def aStar(mapa, dificuldade, manhattan):
     heappush(openList, node)
     closedList = []
     while(len(openList) > 0):
+        #exibeHeap(openList)
         #print("while")
         q = heappop(openList)
         #print(q)
@@ -195,7 +176,7 @@ def aStar(mapa, dificuldade, manhattan):
                 coords = proximo.coords
                 # acho que tem que pegar a dificuldade do q, nao do proximo
                 proximo.g = q.g + dificuldade.get(mapa[q.coords[0]][q.coords[1]])
-                proximo.h = manhattan(mapa[coords[0]][coords[1]])
+                proximo.h = manhattan[coords[0]][coords[1]]
                 proximo.f = proximo.g + proximo.f
                 return proximo
             if checkNode(openList, proximo) or checkNode(closedList, proximo):
@@ -207,6 +188,18 @@ def aStar(mapa, dificuldade, manhattan):
         closedList.append(q)
     return None
 
+def exibeHeap(heap):
+    for e in heap:
+        print(e)
+    print()
+    
+def pintaCaminho(noFinal):
+    no = noFinal
+    while no.pai:
+        coord = no.coords
+        interface.pintaPosicao(coord[0], coord[1], (0, 0, 255))
+        no = no.pai
+
 def main():
     mapa, dificuldadeCasas, poderCosmico = leDadosConfiguraveis()
     manhattan = calculaDistancia()
@@ -217,10 +210,10 @@ def main():
     print(dificuldadeCasas)
     print(poderCosmico)
     print(manhattan)
-    print(aStar(mapa, dificuldadeCasas, manhattan))
+    pintaCaminho(aStar(mapa, dificuldadeCasas, manhattan))
     #sleep(10)
     #interface.pintaPosicao(21, 21, (255, 0, 0))
-    #sleep(10)
+    sleep(20)
     interface.fechaInterface()
     
 main()

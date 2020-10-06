@@ -57,3 +57,7 @@ def fechaInterface():
     # Be IDLE friendly. If you forget this line, the program will 'hang'
     # on exit.
     pygame.quit()
+    
+def pintaPosicao(linha, coluna, cor):
+    pygame.draw.rect(SCREEN, cor,[(MARGIN + WIDTH) * coluna + MARGIN,(MARGIN + HEIGHT) * linha + MARGIN, WIDTH, HEIGHT])
+    pygame.display.flip()

@@ -41,6 +41,9 @@ def inicializaMapa(file, dificuldade):
         for j in range(COLUNAS):
             #mapa[i][j] = dificuldade.get(linha[j])
             mapa[i][j] = linha[j]
+    # Independente do terreno, as casa inicial e final tem marcação única
+    mapa[CASA_INICIAL[0]][CASA_INICIAL[1]] = "I"
+    mapa[CASA_FINAL[0]][CASA_FINAL[1]] = "F"
     return mapa
         
 # O parâmetro 'dificuldade' deve ser uma lista com 3 inteiros
@@ -53,6 +56,9 @@ def inicializaDificuldade(dificuldade):
     dificuldadeCasas['M'] = dificuldade[0]
     dificuldadeCasas['P'] = dificuldade[1]
     dificuldadeCasas['R'] = dificuldade[2]
+    # As dificuldades da casa inicial e final não são contabilizadas
+    dificuldadeCasas['I'] = 0
+    dificuldadeCasas['F'] = 0
     return dificuldadeCasas
 
 # O parâmetro 'poder' deve ser uma lista com 3 inteiros
@@ -129,23 +135,19 @@ def getVizinhos(node, mapa, dificuldade, manhattan):
     if noValido(x - 1, y):
         xx = x - 1
         yy = y
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
     if noValido(x, y + 1):
         xx = x
         yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
     if noValido(x + 1, y):
         xx = x + 1
         yy = y
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
     if noValido(x, y - 1):
         xx = x
         yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[node.coords[0]][node.coords[1]]),
-                             manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
     return vizinhos
 
 # Checa se existe nó com mesmas coordenadas na lista que possuam 'f' menor

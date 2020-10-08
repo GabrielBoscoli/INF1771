@@ -10,7 +10,7 @@ Interface gráfica do trabalho 1 de Inteligência Artificial
 import pygame
 
 # Define some colors
-COLORS = {'M': (128, 128, 128), 'P': (191, 191, 191), 'R': (217, 217, 217)}
+COLORS = {'M': (128, 128, 128), 'P': (191, 191, 191), 'R': (217, 217, 217), 'I': (255, 0, 0), 'F': (0, 176, 80)}
 BLACK = (0, 0, 0)
 
 # This sets the WIDTH and HEIGHT of each grid location

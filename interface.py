@@ -17,6 +17,11 @@ BLACK = (0, 0, 0)
 WIDTH = 20
 HEIGHT = 20
 
+# This sets the WIDTH and HEIGHT do texto que exibe o custo
+CUSTO_WIDTH = 200
+CUSTO_HEIGHT = 20
+CUSTO_MARGIN = 10
+
 # This sets the margin between each cell
 MARGIN = 1
 
@@ -52,6 +57,16 @@ def inicializaInterface(linhas, colunas, title):
     SCREEN.fill(BLACK)
     # Set title of screen
     pygame.display.set_caption(title)
+    
+def atualizaCusto(custo):
+    font_name = pygame.font.match_font('arial')
+    font = pygame.font.Font(font_name, 32) 
+    text = font.render('Custo: ' + str(custo), True, (255, 255, 255), (0, 0, 0))
+    textRect = text.get_rect()
+    textRect.topleft = (CUSTO_MARGIN, CUSTO_MARGIN)
+    SCREEN.blit(text, textRect)
+    # Go ahead and update the screen with what we've drawn.
+    pygame.display.flip()
 
 def fechaInterface():
     # Be IDLE friendly. If you forget this line, the program will 'hang'

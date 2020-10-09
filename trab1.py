@@ -170,6 +170,7 @@ def aStar(mapa, dificuldade, manhattan):
         #exibeHeap(openList)
         #print("while")
         q = heappop(openList)
+        interface.atualizaCusto(q.g)
         #print(q)
         vizinhos = getVizinhos(q, mapa, dificuldade, manhattan)
         for proximo in vizinhos:
@@ -180,11 +181,13 @@ def aStar(mapa, dificuldade, manhattan):
                 proximo.g = q.g + dificuldade.get(mapa[q.coords[0]][q.coords[1]])
                 proximo.h = manhattan[coords[0]][coords[1]]
                 proximo.f = proximo.g + proximo.f
+                interface.atualizaCusto(proximo.g)
                 return proximo
             if checkNode(openList, proximo) or checkNode(closedList, proximo):
                 continue;
             else:
                 #print("push")
+                #sleep(1)
                 interface.pintaPosicao(proximo.coords[0], proximo.coords[1], (255, 0, 0))
                 heappush(openList, proximo)
         closedList.append(q)

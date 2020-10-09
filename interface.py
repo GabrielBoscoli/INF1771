@@ -74,5 +74,6 @@ def fechaInterface():
     pygame.quit()
     
 def pintaPosicao(linha, coluna, cor):
+    pygame.event.get()
     pygame.draw.rect(SCREEN, cor,[(MARGIN + WIDTH) * coluna + MARGIN,(MARGIN + HEIGHT) * linha + MARGIN, WIDTH, HEIGHT])
     pygame.display.flip()

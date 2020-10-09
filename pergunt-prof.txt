@@ -1,3 +1,4 @@
 boa noite, professor
 queria confirmar se a representação do caminho e exibição do custo deve ser dessa maneira
 *envia video*
+o caminho deve marcar todos os proximos ou apenas os q?

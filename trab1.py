@@ -170,6 +170,7 @@ def aStar(mapa, dificuldade, manhattan):
         #exibeHeap(openList)
         #print("while")
         q = heappop(openList)
+        interface.pintaPosicao(q.coords[0], q.coords[1], (255, 0, 0))
         interface.atualizaCusto(q.g)
         #print(q)
         vizinhos = getVizinhos(q, mapa, dificuldade, manhattan)
@@ -188,7 +189,7 @@ def aStar(mapa, dificuldade, manhattan):
             else:
                 #print("push")
                 #sleep(1)
-                interface.pintaPosicao(proximo.coords[0], proximo.coords[1], (255, 0, 0))
+                #interface.pintaPosicao(proximo.coords[0], proximo.coords[1], (255, 0, 0))
                 heappush(openList, proximo)
         closedList.append(q)
     return None
@@ -220,7 +221,7 @@ def main():
     print(resultadoBusca.g)
     #sleep(10)
     #interface.pintaPosicao(21, 21, (255, 0, 0))
-    sleep(20)
+    sleep(2)
     interface.fechaInterface()
     
 main()

@@ -135,19 +135,19 @@ def getVizinhos(node, mapa, dificuldade, manhattan):
     if noValido(x - 1, y):
         xx = x - 1
         yy = y
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[xx][yy]), manhattan[xx][yy]))
     if noValido(x, y + 1):
         xx = x
         yy = y + 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[xx][yy]), manhattan[xx][yy]))
     if noValido(x + 1, y):
         xx = x + 1
         yy = y
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[xx][yy]), manhattan[xx][yy]))
     if noValido(x, y - 1):
         xx = x
         yy = y - 1
-        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[x][y]), manhattan[xx][yy]))
+        vizinhos.append(Node((xx, yy), node, node.g + dificuldade.get(mapa[xx][yy]), manhattan[xx][yy]))
     return vizinhos
 
 # Checa se existe nó com mesmas coordenadas na lista que possuam 'f' menor
@@ -178,7 +178,7 @@ def aStar(mapa, dificuldade, manhattan):
             if proximo.coords == CASA_FINAL:
                 coords = proximo.coords
                 # acho que tem que pegar a dificuldade do q, nao do proximo
-                proximo.g = q.g + dificuldade.get(mapa[q.coords[0]][q.coords[1]])
+                proximo.g = q.g + dificuldade.get(mapa[coords[0]][coords[1]])
                 proximo.h = manhattan[coords[0]][coords[1]]
                 proximo.f = proximo.g + proximo.f
                 interface.atualizaCusto(proximo.g)

@@ -201,7 +201,7 @@ def exibeHeap(heap):
     
 def pintaCaminho(noFinal):
     no = noFinal
-    while no.pai:
+    while no:
         coord = no.coords
         interface.pintaPosicao(coord[0], coord[1], (0, 0, 255))
         no = no.pai

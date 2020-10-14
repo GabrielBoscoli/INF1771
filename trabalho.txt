@@ -10,3 +10,6 @@ https://github.com/stephaniefay/INF1771
 https://github.com/marcelopaulon/PUC-Rio-INF1771-Artificial-Intelligence/tree/master/INF1771-T1/src
 
 n eh do trab mas eh legal -> https://github.com/GabrielHeffer/INF1771-IA
+
+para o algoritmo genetico quando dps d x iterações, a porcetagem de acerto nao melhora.
+x pode ser 5 ou 10, por exemplo

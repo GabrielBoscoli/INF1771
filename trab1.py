@@ -187,9 +187,7 @@ def aStar(mapa, dificuldade, manhattan):
             if checkNode(openList, proximo) or checkNode(closedList, proximo):
                 continue;
             else:
-                #print("push")
-                #sleep(1)
-                #interface.pintaPosicao(proximo.coords[0], proximo.coords[1], (255, 0, 0))
+                interface.pintaPosicao(proximo.coords[0], proximo.coords[1], (255, 165, 0))
                 heappush(openList, proximo)
         closedList.append(q)
     return None

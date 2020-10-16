@@ -11,8 +11,6 @@ Trabalho 1 - Busca Heurística e Busca Local
 import interface
 from heapq import heappush, heappop
 from time import sleep
-from random import choice, uniform
-from math import exp
 
 # Dimensões do mapa
 LINHAS = 42
@@ -23,9 +21,6 @@ CASA_FINAL = (4, 37)
 
 # Coordenada da casa inicial
 CASA_INICIAL = (37, 37)
-
-# Estado corrente usado no algoritmo de simulated annealing
-CURRENT_STATE = []
 
 # Retorna uma matriz linhasXcolunas com 0 em todas as posições
 def inicializaMatriz(linhas, colunas):
@@ -196,44 +191,6 @@ def aStar(mapa, dificuldade, manhattan):
                 heappush(openList, proximo)
         closedList.append(q)
     return None
-
-def get_cost(state):
-    """Calculates cost of the argument state for your solution."""
-    return 0
-    
-def get_neighbors(state):
-    """Returns neighbors of the argument state for your solution."""
-    return 0
-
-def simulated_annealing(initial_state):
-    """Peforms simulated annealing to find a solution"""
-    initial_temp = 90
-    final_temp = .1
-    alpha = 0.01
-    
-    current_temp = initial_temp
-
-    # Start by initializing the current state with the initial state
-    current_state = initial_state
-    solution = current_state
-
-    while current_temp > final_temp:
-        neighbor = choice(get_neighbors())
-
-        # Check if neighbor is best so far
-        cost_diff = get_cost(CURRENT_STATE) - get_cost(neighbor)
-
-        # if the new solution is better, accept it
-        if cost_diff > 0:
-            solution = neighbor
-        # if the new solution is not better, accept it with a probability of e^(-cost/temp)
-        else:
-            if uniform(0, 1) < exp(cost_diff / current_temp):
-                solution = neighbor
-        # decrement the temperature
-        current_temp -= alpha
-
-    return solution
 
 def exibeHeap(heap):
     for e in heap:

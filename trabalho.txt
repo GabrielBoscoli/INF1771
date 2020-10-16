@@ -13,3 +13,11 @@ n eh do trab mas eh legal -> https://github.com/GabrielHeffer/INF1771-IA
 
 para o algoritmo genetico quando dps d x iterações, a porcetagem de acerto nao melhora.
 x pode ser 5 ou 10, por exemplo
+
+ideia de algoritmo:
+1. acha o caminho primeiro, com as casas do mestre com peso 1 ou 0
+2. roda simulated anealing nas casas do mestre que o caminho percorreu e atribui novo custo calculado
+3. roda a* de novo com os novos custos, verificando se existe caminho melhor
+4. repete passos 2 e 3 ate o caminho do passo 3 ser igual ao do 2
+
+simulated annealing -> https://medium.com/swlh/how-to-implement-simulated-annealing-algorithm-in-python-ab196c2f56a0

@@ -7,20 +7,26 @@ Created on Fri Oct 16 13:00:32 2020
 Módulo responsável pelo simulated annealing
 """
 
-from random import choice, uniform
+from random import choice, uniform, randint
 from math import exp
 import copy
 
 NOME_CAVALEIROS = ['Seya', 'Ikki', 'Shiryu', 'Hyoga', 'Shun']
 
-MIN_CAVALEIROS_CASA = 0
+MIN_CAVALEIROS_CASA = 1
 MAX_CAVALEIROS_CASA = 5
 
 # Poder cosmico default
 PODER_COSMICO = { 'Seya': 1.5, 'Ikki': 1.4, 'Shiryu': 1.3, 'Hyoga': 1.2, 'Shun': 1.1 }
 
+# Quantidade de cavaleiros
+CAVALEIROS = 5
+
 # Numero de vidas de cada cavaleiro
 VIDA = 5
+
+# Numero de casas do zodiaco
+CASAS_DO_ZODIACO = 12
 
 def setPoderCosmico(poderCosmico):
     global PODER_COSMICO
@@ -36,6 +42,112 @@ def solucaoValida(cavaleiros):
     if qntd_cavaleiros < maximo_cavaleiros:
         return True
     return False
+
+def geraEstadoInicial(cavaleiros, cavaleiros_faltando):
+    index_cavaleiro = 0
+    
+    # coloca todos os cavaleiros em uma casa, matando todos eles
+    for i in range(CASAS_DO_ZODIACO):
+        cavaleiro = NOME_CAVALEIROS[index_cavaleiro]
+        cavaleiros[i].append(cavaleiro)
+        cavaleiros_faltando[cavaleiro] -= 1
+        if cavaleiros_faltando[cavaleiro] == 0:
+            index_cavaleiro += 1
+            
+    # salva aleatoriamente um cavaleiro
+    cavaleiro_salvo = NOME_CAVALEIROS[randint(0, CAVALEIROS)]
+    casas_com_cavaleiro = []
+    for i in range(CASAS_DO_ZODIACO):
+        if cavaleiro_salvo in cavaleiros[i] and len(cavaleiros[i]) > 1:
+            casas_com_cavaleiro.append(i)
+    cavaleiros[choice(casas_com_cavaleiro)].remove(cavaleiro_salvo)
+
+def trocaCasas(cavaleiros):
+    casa1 = randint(0,len(cavaleiros))
+    casa2 = randint(0,len(cavaleiros))
+    cavaleiros[casa1], cavaleiros[casa2] = cavaleiros[casa2], cavaleiros[casa1]
+    
+def shiftaCavaleiros(cavaleiros):
+    fileira = randint(0, 3)
+    primeiro_cavaleiro = None
+    if fileira < len(cavaleiros[0]):
+        primeiro_cavaleiro = cavaleiros[0][fileira]
+        cavaleiros[0].remove(primeiro_cavaleiro)
+    for i in range(1, len(cavaleiros)):
+        if fileira < len(cavaleiros[i]):
+            cavaleiros[i - 1][fileira].append(cavaleiros[i][fileira])
+            cavaleiros[i].remove(cavaleiros[i][fileira])
+    if primeiro_cavaleiro:
+        cavaleiros[len(cavaleiros) - 1].append(primeiro_cavaleiro)
+
+def trocaCavaleiro(cavaleiros, cavaleiros_faltando):
+    cavaleiro1 = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS))]
+    casas_sem_cavaleiro1 = []
+    casas_com_cavaleiro1 = []
+    # acha casa que nao tem o cavaleiro
+    for i in range(len(cavaleiros)):
+        if cavaleiro1 not in cavaleiros[i]:
+            casas_sem_cavaleiro1.append(i)
+        else:
+            casas_com_cavaleiro1.append(i)
+            
+    cavaleiro2 = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS))]
+    casas_sem_cavaleiro2 = []
+    casas_com_cavaleiro2 = []
+    # acha casa que nao tem o cavaleiro
+    for i in range(len(cavaleiros)):
+        if cavaleiro2 not in cavaleiros[i]:
+            casas_sem_cavaleiro2.append(i)
+        else:
+            casas_com_cavaleiro2.append(i)
+            
+    casa_sem_cavaleiro1 = choice(casas_sem_cavaleiro1)
+    casa_sem_cavaleiro2 = choice(casas_sem_cavaleiro2)
+    casa_com_cavaleiro1 = choice(casas_com_cavaleiro1)
+    casa_com_cavaleiro2 = choice(casas_com_cavaleiro2)
+    
+    # remove cavaleiro 1 da sua casa original e insere na nova
+    cavaleiros[casa_com_cavaleiro1].remove(cavaleiro1)
+    cavaleiros[casa_sem_cavaleiro1].append(cavaleiro1)
+    # remove cavaleiro 2 da sua casa original e insere na nova
+    cavaleiros[casa_com_cavaleiro2].remove(cavaleiro2)
+    cavaleiros[casa_sem_cavaleiro2].append(cavaleiro2)
+    
+    # verificar se essa vizinhança preserva o maximo e o minimo de cavaleiros
+    
+def trocaCavaleiroVivo(cavaleiros, cavaleiros_faltando):
+    cavaleiro_vivo = None
+    # pega o cavaleiro que está vivo
+    for i in range(NOME_CAVALEIROS):
+        if cavaleiros_faltando[NOME_CAVALEIROS[i]] > 0:
+            cavaleiro_vivo = NOME_CAVALEIROS[i]
+    
+    # escolhe cavaleiro para viver
+    cavaleiro_viver = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS))]
+    while(cavaleiro_viver == cavaleiro_vivo):
+        cavaleiro_viver = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS))]
+    
+    casas_com_cavaleiro = []
+    for i in range(len(cavaleiros)):
+        if cavaleiro_viver in cavaleiros[i]:
+            casas_com_cavaleiro.append(i)
+    
+    casa_com_cavaleiro = choice(casas_com_cavaleiro)
+    
+    # remove o cavaleiro que vai viver
+    cavaleiros[casa_com_cavaleiro].remove(cavaleiro_viver)
+    cavaleiros_faltando[cavaleiro_viver] += 1
+    
+    casas_sem_cavaleiro = []
+    for i in range(len(cavaleiros)):
+        if cavaleiro_vivo not in cavaleiros[i] and len(cavaleiros[i]) < MAX_CAVALEIROS_CASA:
+            casas_sem_cavaleiro.append(i)
+            
+    casa_sem_cavaleiro = choice(casas_sem_cavaleiro)
+    
+    # adiciona o cavaleiro que vai morrer
+    cavaleiros[casa_sem_cavaleiro].append(cavaleiro_vivo)
+    cavaleiros_faltando[cavaleiro_vivo] -= 1
 
 class SimulatedAnnealing:
     def __init__(self, dificuldade, cavaleiros, cavaleiros_faltando, current_state=0):
@@ -101,6 +213,30 @@ class SimulatedAnnealing:
                                                 copy.deepcopy(self.cavaleiros_faltando), self.current_state - 1))
         return neighbors
     
+    def get_neighbors2(self):
+        neighbors = []
+        for i in range(len(self.dificuldade)):
+            # tira um cavaleiro
+            for j in range(len(self.cavaleiros[i])):
+                aux_cavaleiros = copy.deepcopy(self.cavaleiros)
+                cavaleiro_removido = self.cavaleiros[i][j]
+                aux_cavaleiros[i].remove(cavaleiro_removido)
+                aux_cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
+                aux_cavaleiros_faltando[cavaleiro_removido] += 1
+                neighbors.append(SimulatedAnnealing(self.dificuldade, aux_cavaleiros, aux_cavaleiros_faltando, self.current_state))
+            # bota um cavaleiro, se tiver espaco
+            if len(self.cavaleiros[i]) < MAX_CAVALEIROS_CASA:
+                for j in range(len(NOME_CAVALEIROS)):
+                    cavaleiro_adicionado = NOME_CAVALEIROS[j]
+                    # se o cavaleiro nao estiver na casa e tiver vida suficiente, adiciona
+                    if self.cavaleiros_faltando[cavaleiro_adicionado] > 0 and cavaleiro_adicionado not in self.cavaleiros[i]:
+                        aux_cavaleiros = copy.deepcopy(self.cavaleiros)
+                        aux_cavaleiros[i].append(cavaleiro_adicionado)
+                        aux_cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
+                        aux_cavaleiros_faltando[cavaleiro_adicionado] -= 1
+                        neighbors.append(SimulatedAnnealing(self.dificuldade, aux_cavaleiros, aux_cavaleiros_faltando, self.current_state))
+        return neighbors
+    
     def simulated_annealing(self):
         """Peforms simulated annealing to find a solution"""
         initial_temp = 100
@@ -115,7 +251,7 @@ class SimulatedAnnealing:
         melhor_solucao = solution
     
         while current_temp > final_temp:
-            neighbor = choice(solution.get_neighbors())
+            neighbor = choice(solution.get_neighbors2())
     
             # Check if neighbor is best so far
             cost_diff = solution.get_cost() - neighbor.get_cost()
@@ -142,7 +278,8 @@ def main():
     total = 0
     minimo = 1000
     maximo = 0
-    for i in range(30):
+    execucoes = 30
+    for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()
         minimo = min(minimo, custo)
@@ -151,9 +288,10 @@ def main():
         #print(resposta.get_cost())
         #print(resposta.cavaleiros)
         #print(resposta.cavaleiros_faltando)
-    print(total/30)
+    print(total/execucoes)
     print(minimo)
     print(maximo)
+    print(resposta.cavaleiros)
     return
     
 if __name__ == '__main__':

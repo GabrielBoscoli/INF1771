@@ -2,3 +2,8 @@ boa noite, professor
 queria confirmar se a representação do caminho e exibição do custo deve ser dessa maneira
 *envia video*
 o caminho deve marcar todos os proximos ou apenas os q?
+
+boa noite, professor
+tudo certo?
+uma perguntinha sobre a avalição
+pra garantir aqueles dois pontos basta ficar entre 355 e 380 ou realmente precisa achar o otimo?

@@ -43,16 +43,17 @@ def solucaoValida(cavaleiros):
         return True
     return False
 
-def geraEstadoInicial(cavaleiros, cavaleiros_faltando):
-    index_cavaleiro = 0
-    
+def geraEstadoInicial(cavaleiros, cavaleiros_faltando):    
     # coloca todos os cavaleiros em uma casa, matando todos eles
-    for i in range(CASAS_DO_ZODIACO):
-        cavaleiro = NOME_CAVALEIROS[index_cavaleiro]
-        cavaleiros[i].append(cavaleiro)
-        cavaleiros_faltando[cavaleiro] -= 1
-        if cavaleiros_faltando[cavaleiro] == 0:
-            index_cavaleiro += 1
+    index_casa = 0
+    for i in range(CAVALEIROS):
+        for j in range(VIDA):
+            cavaleiro = NOME_CAVALEIROS[i]
+            cavaleiros[index_casa % CASAS_DO_ZODIACO].append(cavaleiro)
+            cavaleiros_faltando[cavaleiro] -= 1
+            index_casa += 1
+            
+    print(cavaleiros)
             
     # salva aleatoriamente um cavaleiro
     cavaleiro_salvo = NOME_CAVALEIROS[randint(0, CAVALEIROS)]
@@ -70,15 +71,23 @@ def trocaCasas(cavaleiros):
 def shiftaCavaleiros(cavaleiros):
     fileira = randint(0, 3)
     primeiro_cavaleiro = None
+    # salva o cavaleiro da fileira da primeira casa
     if fileira < len(cavaleiros[0]):
         primeiro_cavaleiro = cavaleiros[0][fileira]
-        cavaleiros[0].remove(primeiro_cavaleiro)
+        cavaleiros[0].remove(primeiro_cavaleiro)   
+    # para todos os outros cavaleiros
     for i in range(1, len(cavaleiros)):
         if fileira < len(cavaleiros[i]):
-            cavaleiros[i - 1][fileira].append(cavaleiros[i][fileira])
-            cavaleiros[i].remove(cavaleiros[i][fileira])
-    if primeiro_cavaleiro:
-        cavaleiros[len(cavaleiros) - 1].append(primeiro_cavaleiro)
+            cavaleiro_removido = cavaleiros[i][fileira]
+            cavaleiros[i].remove(cavaleiro_removido)
+            # procura casa anterior que nao tem o caveleiro que foi removido e o adiciona
+            for j in range(1, CASAS_DO_ZODIACO):
+                    if cavaleiro_removido not in cavaleiros[(i - j) % CASAS_DO_ZODIACO]:
+                        cavaleiros[(i - j) % CASAS_DO_ZODIACO].append(cavaleiro_removido)
+    # se tem primeiro cavaleiro
+    for i in range(CASAS_DO_ZODIACO):
+        if primeiro_cavaleiro not in cavaleiros[(i - j) % CASAS_DO_ZODIACO]:
+            cavaleiros[(i - j) % CASAS_DO_ZODIACO].append(primeiro_cavaleiro)
 
 def trocaCavaleiro(cavaleiros, cavaleiros_faltando):
     cavaleiro1 = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS))]
@@ -279,6 +288,8 @@ def main():
     minimo = 1000
     maximo = 0
     execucoes = 30
+    SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
+    return
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

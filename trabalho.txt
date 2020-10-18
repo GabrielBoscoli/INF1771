@@ -21,3 +21,8 @@ ideia de algoritmo:
 4. repete passos 2 e 3 ate o caminho do passo 3 ser igual ao do 2
 
 simulated annealing -> https://medium.com/swlh/how-to-implement-simulated-annealing-algorithm-in-python-ab196c2f56a0
+
+Média: 380.87797734222033
+Custo Mínimo: 374.7164435181677
+Solucao Mínima: [['Shiryu', 'Shun'], ['Shiryu', 'Shun'], ['Shiryu', 'Shun'], ['Ikki', 'Hyoga'], ['Ikki', 'Hyoga'], ['Seya', 'Shiryu'], ['Ikki', 'Shun'], ['Ikki', 'Hyoga'], ['Seya', 'Hyoga'], ['Seya', 'Hyoga'], ['Ikki', 'Seya'], ['Seya', 'Shiryu']]
+Máximo: 386.4471961211092

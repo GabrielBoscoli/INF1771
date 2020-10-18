@@ -20,7 +20,7 @@ HEIGHT = 20
 # This sets the WIDTH and HEIGHT do texto que exibe o custo
 CUSTO_WIDTH = 200
 CUSTO_HEIGHT = 20
-CUSTO_MARGIN = 10
+CUSTO_MARGIN = 5
 
 # This sets the margin between each cell
 MARGIN = 1
@@ -60,7 +60,7 @@ def inicializaInterface(linhas, colunas, title):
     
 def atualizaCusto(custo):
     font_name = pygame.font.match_font('arial')
-    font = pygame.font.Font(font_name, 32) 
+    font = pygame.font.Font(font_name, 30) 
     text = font.render('Custo: ' + str(custo), True, (255, 255, 255), (0, 0, 0))
     textRect = text.get_rect()
     textRect.topleft = (CUSTO_MARGIN, CUSTO_MARGIN)

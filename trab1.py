@@ -9,6 +9,7 @@ Trabalho 1 - Busca Heurística e Busca Local
 """
 
 import interface
+import simulated_annealing
 from heapq import heappush, heappop
 from time import sleep
 
@@ -21,6 +22,21 @@ CASA_FINAL = (4, 37)
 
 # Coordenada da casa inicial
 CASA_INICIAL = (37, 37)
+
+# Numero total de casas do zoadiaco
+CASAS_DO_ZOADIACO = 12
+
+# Dificuldade das casas do zodiaco
+DIFICULDADE_ZOADICO = [50, 55, 60, 70, 75, 80, 85, 90, 95, 100, 110, 120]
+
+# Posicao das casas do zodiaco
+POSICAO_ZODIACO = [(37, 21), (31, 17), (31, 33), (24, 26), (24, 9), (17, 9), (17, 29), (13, 37), (9, 27), (9, 14), (4, 13), (4, 30)]
+
+# Quantidade de energia maxima de um cavaleiro
+VIDA = 5
+
+# Qunatidade inicial de energia dos cavaleiros
+ENERGIA_CAVALEIROS = { 'Seya': VIDA, 'Ikki': VIDA, 'Shiryu': VIDA, 'Hyoga': VIDA, 'Shun': VIDA }
 
 # Retorna uma matriz linhasXcolunas com 0 em todas as posições
 def inicializaMatriz(linhas, colunas):
@@ -203,6 +219,21 @@ def pintaCaminho(noFinal):
         coord = no.coords
         interface.pintaPosicao(coord[0], coord[1], (0, 0, 255))
         no = no.pai
+        
+def atribuiCustoCasaEspecial(solucao, dificuldade, poderCosmico, mapa):
+    for i in range(len(solucao)):
+        dificuldadeCasa = DIFICULDADE_ZOADICO[i]
+        soma_poder = 0
+        for cavaleiro in solucao[i]:
+            soma_poder += poderCosmico[cavaleiro]
+        dificuldadeCasa = dificuldadeCasa/soma_poder
+        #dificuldadeCasa = 0
+        dificuldade[str(i)] = dificuldadeCasa
+        mapa[POSICAO_ZODIACO[i][0]][POSICAO_ZODIACO[i][1]] = str(i)
+        
+def pintaZodiaco():
+    for posicao in POSICAO_ZODIACO:
+        interface.pintaPosicao(posicao[0], posicao[1], (255, 255, 255))
 
 def main():
     mapa, dificuldadeCasas, poderCosmico = leDadosConfiguraveis()
@@ -214,12 +245,21 @@ def main():
     print(dificuldadeCasas)
     print(poderCosmico)
     print(manhattan)
+    cavaleiros = [[], [], [], [], [], [], [], [], [], [], [], []]
+    resultadoCombinatoria = simulated_annealing.SimulatedAnnealing(DIFICULDADE_ZOADICO, cavaleiros, ENERGIA_CAVALEIROS).simulated_annealing()
+    atribuiCustoCasaEspecial(resultadoCombinatoria.cavaleiros, dificuldadeCasas, poderCosmico, mapa)
+    print(mapa)
+    print(dificuldadeCasas)
+    print(resultadoCombinatoria.get_cost())
+    print(resultadoCombinatoria.cavaleiros)
     resultadoBusca = aStar(mapa, dificuldadeCasas, manhattan)
     pintaCaminho(resultadoBusca)
     print(resultadoBusca.g)
+    pintaZodiaco()
     #sleep(10)
     #interface.pintaPosicao(21, 21, (255, 0, 0))
     sleep(2)
     interface.fechaInterface()
     
-main()
+if __name__ == '__main__':
+    main()

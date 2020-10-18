@@ -506,7 +506,7 @@ def main():
     minimo = 1000
     minimo_vizinho = None
     maximo = 0
-    execucoes = 10
+    execucoes = 1
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

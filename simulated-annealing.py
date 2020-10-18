@@ -18,6 +18,7 @@ MAX_CAVALEIROS_CASA = 5
 
 # Poder cosmico default
 PODER_COSMICO = { 'Seya': 1.5, 'Ikki': 1.4, 'Shiryu': 1.3, 'Hyoga': 1.2, 'Shun': 1.1 }
+PODER_COSMICO_ORDENADO = [ 1.5, 1.4, 1.3, 1.2, 1.1 ]
 
 # Quantidade de cavaleiros
 CAVALEIROS = 5
@@ -31,6 +32,11 @@ CASAS_DO_ZODIACO = 12
 def setPoderCosmico(poderCosmico):
     global PODER_COSMICO
     PODER_COSMICO = poderCosmico
+    poderes = []
+    for key, value in PODER_COSMICO:
+        poderes.append(value)
+    global PODER_COSMICO_ORDENADO
+    PODER_COSMICO_ORDENADO = poderes.sort(reverse=True)
     
 def solucaoValida(cavaleiros):
     maximo_cavaleiros = MAX_CAVALEIROS_CASA * VIDA
@@ -133,7 +139,7 @@ class SimulatedAnnealing:
     
     def get_neighbors3(self):
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo, self.trocaCavaleiro, self.shiftaCavaleiro]
-        vizinhancas = 10
+        vizinhancas = 20
         current_vizinhanca = 0
         melhor_custo = 100000000
         melhor_vizinhanca = None
@@ -146,7 +152,7 @@ class SimulatedAnnealing:
                     melhor_vizinhanca = vizinho
         return melhor_vizinhanca
     
-    def geraEstadoInicial(self):    
+    def geraEstadoInicial(self):
         cavaleiros = copy.deepcopy(self.cavaleiros)
         cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
         # coloca todos os cavaleiros em uma casa, matando todos eles
@@ -154,14 +160,14 @@ class SimulatedAnnealing:
         for i in range(CAVALEIROS):
             for j in range(VIDA):
                 cavaleiro = NOME_CAVALEIROS[i]
-                cavaleiros[index_casa % CASAS_DO_ZODIACO].append(cavaleiro)
+                cavaleiros[index_casa % len(cavaleiros)].append(cavaleiro)
                 cavaleiros_faltando[cavaleiro] -= 1
                 index_casa += 1
                 
         # salva aleatoriamente um cavaleiro
         cavaleiro_salvo = NOME_CAVALEIROS[randint(0, CAVALEIROS - 1)]
         casas_com_cavaleiro = []
-        for i in range(CASAS_DO_ZODIACO):
+        for i in range(len(cavaleiros)):
             if cavaleiro_salvo in cavaleiros[i] and len(cavaleiros[i]) > 1:
                 casas_com_cavaleiro.append(i)
         cavaleiros[choice(casas_com_cavaleiro)].remove(cavaleiro_salvo)
@@ -276,6 +282,66 @@ class SimulatedAnnealing:
         cavaleiros_faltando[cavaleiro_vivo] -= 1
         return SimulatedAnnealing(self.dificuldade, cavaleiros, cavaleiros_faltando, self.current_state)
     
+    # faz a troca dos cavaleiros, se reduzir o custo
+    def swapCavaleiros(self, posicao_fraco, posicao_forte, corrente):
+        cavaleiros = copy.deepcopy(self.cavaleiros)
+        cavaleiro_fraco = cavaleiros[posicao_fraco[0]][posicao_fraco[1]]
+        cavaleiro_forte = cavaleiros[posicao_forte[0]][posicao_forte[1]]
+        
+        if cavaleiro_forte in cavaleiros[posicao_fraco[0]] or cavaleiro_fraco in cavaleiros[posicao_forte[0]]:
+            return corrente
+        
+        cavaleiros[posicao_fraco[0]].remove(cavaleiro_fraco)
+        cavaleiros[posicao_forte[0]].remove(cavaleiro_forte)
+        cavaleiros[posicao_fraco[0]].append(cavaleiro_forte)
+        cavaleiros[posicao_forte[0]].append(cavaleiro_fraco)
+        vizinho = SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
+        
+        # se tiver um custo melhor, retorna o vizinho
+        if (vizinho.get_cost() < corrente.get_cost()):
+            #print(vizinho.get_cost(), self.get_cost())
+            return vizinho
+        #print("solucao vizinho:", vizinho.cavaleiros, vizinho.get_cost())
+        #print("solucao corrente:", corrente.cavaleiros, corrente.get_cost())
+        return corrente
+    
+    def guloso(self):
+        cavaleiros = copy.deepcopy(self.cavaleiros)
+        #print(self.cavaleiros)
+        
+        corrente = self
+        for k in range(len(PODER_COSMICO)):
+            while True:
+                # pega o caveleiro mais fraco que se encontra na casa mais dificil
+                posicao_cavaleiro_fraco = None
+                for i in range(len(cavaleiros) - 1, -1, -1):
+                    for j in range(len(cavaleiros[i])):
+                        if PODER_COSMICO[cavaleiros[i][j]] == PODER_COSMICO_ORDENADO[len(PODER_COSMICO_ORDENADO) - 1]:
+                            posicao_cavaleiro_fraco = (i, j)
+                    if posicao_cavaleiro_fraco:
+                        break
+                       
+                posicao_cavaleiro_forte = None
+                # pega o cavaleiro mais forte que se encontra numa casa facil
+                for i in range(len(cavaleiros)):
+                    for j in range(len(cavaleiros[i])):
+                        if PODER_COSMICO[cavaleiros[i][j]] == PODER_COSMICO_ORDENADO[k]:
+                            posicao_cavaleiro_forte = (i, j)
+                    if posicao_cavaleiro_forte:
+                        break
+                #print(posicao_cavaleiro_fraco)
+                #print("cavaleiro mais fraco:", cavaleiros[posicao_cavaleiro_fraco[0]][posicao_cavaleiro_fraco[1]])
+                #print(posicao_cavaleiro_forte)
+                #print("cavaleiro mais forte:", cavaleiros[posicao_cavaleiro_forte[0]][posicao_cavaleiro_forte[1]])
+                if corrente == self.swapCavaleiros(posicao_cavaleiro_fraco, posicao_cavaleiro_forte, corrente):
+                    #print("break")
+                    break
+                corrente = self.swapCavaleiros(posicao_cavaleiro_fraco, posicao_cavaleiro_forte, corrente)
+                #print("custo do corrente:", corrente.get_cost())
+                #print("fora:", corrente.get_cost())
+        
+        return corrente
+    
     def simulated_annealing(self):
         """Peforms simulated annealing to find a solution"""
         initial_temp = 100
@@ -301,7 +367,7 @@ class SimulatedAnnealing:
             if cost_diff > 0:
                 solution = neighbor
                 if solucaoValida(solution.cavaleiros):
-                    melhor_solucao = solution
+                    melhor_solucao = solution.guloso()
             # if the new solution is not better, accept it with a probability of e^(-cost/temp)
             else:
                 if uniform(0, 1) < exp(cost_diff / current_temp):
@@ -311,7 +377,7 @@ class SimulatedAnnealing:
     
         return melhor_solucao
     
-def main():
+def main():    
     dificuldade = [50, 55, 60, 70, 75, 80, 85, 90, 95, 100, 110, 120]
     cavaleiros = [[], [], [], [], [], [], [], [], [], [], [], []]
     cavaleiros_faltando = { 'Seya': VIDA, 'Ikki': VIDA, 'Shiryu': VIDA, 'Hyoga': VIDA, 'Shun': VIDA }
@@ -319,7 +385,7 @@ def main():
     minimo = 1000
     minimo_vizinho = None
     maximo = 0
-    execucoes = 100
+    execucoes = 10
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

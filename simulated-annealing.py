@@ -9,6 +9,7 @@ Módulo responsável pelo simulated annealing
 
 from random import choice, choices, uniform, randint, shuffle
 from math import exp
+from collections import deque 
 import copy
 
 NOME_CAVALEIROS = ['Seya', 'Ikki', 'Shiryu', 'Hyoga', 'Shun']
@@ -143,8 +144,8 @@ class SimulatedAnnealing:
     def get_neighbors3(self):
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
                      self.trocaCavaleiro, self.shiftaCavaleiro, self.mudaTodasCasas,
-                     self.redistribuiCavaleiros, self.inverteCavaleiros]
-        vizinhancas = 15
+                     self.redistribuiCavaleiros, self.inverteCavaleiros, self.shiftaCasas]
+        vizinhancas = 10
         current_vizinhanca = 0
         melhor_custo = 100000000
         melhor_vizinhanca = None
@@ -409,6 +410,21 @@ class SimulatedAnnealing:
         cavaleiros[casa].append(cavaleiro)
         return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
     
+    def shiftaCasas(self):
+        cavaleiros = copy.deepcopy(self.cavaleiros)
+        melhor_vizinho = self
+        custo = melhor_vizinho.get_cost()
+        for i in range(len(cavaleiros)):
+            cavaleiros = deque(cavaleiros)
+            cavaleiros.rotate(i)
+            cavaleiros = list(cavaleiros)
+            vizinho = SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
+            custo_vizinho = vizinho.get_cost()
+            if custo_vizinho < custo:
+                melhor_vizinho = vizinho
+                custo = custo_vizinho
+        return melhor_vizinho
+    
     def guloso(self):
         cavaleiros = copy.deepcopy(self.cavaleiros)
         cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
@@ -490,7 +506,7 @@ def main():
     minimo = 1000
     minimo_vizinho = None
     maximo = 0
-    execucoes = 15
+    execucoes = 10
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

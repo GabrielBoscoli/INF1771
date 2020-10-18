@@ -375,18 +375,18 @@ class SimulatedAnnealing:
         return SimulatedAnnealing(self.dificuldade, cavaleiros, cavaleiros_faltando, self.current_state).mudaTodasCasas()
     
     # faz a troca dos cavaleiros, se reduzir o custo
-    def swapCavaleiros(self, posicao_fraco, posicao_forte, corrente):
+    def swapCavaleiros(self, posicao1, posicao2, corrente):
         cavaleiros = copy.deepcopy(corrente.cavaleiros)
-        cavaleiro_fraco = cavaleiros[posicao_fraco[0]][posicao_fraco[1]]
-        cavaleiro_forte = cavaleiros[posicao_forte[0]][posicao_forte[1]]
+        cavaleiro_fraco = cavaleiros[posicao1[0]][posicao1[1]]
+        cavaleiro_forte = cavaleiros[posicao2[0]][posicao2[1]]
         
-        if cavaleiro_forte in cavaleiros[posicao_fraco[0]] or cavaleiro_fraco in cavaleiros[posicao_forte[0]]:
+        if cavaleiro_forte in cavaleiros[posicao1[0]] or cavaleiro_fraco in cavaleiros[posicao2[0]]:
             return corrente
         
-        cavaleiros[posicao_fraco[0]].remove(cavaleiro_fraco)
-        cavaleiros[posicao_forte[0]].remove(cavaleiro_forte)
-        cavaleiros[posicao_fraco[0]].append(cavaleiro_forte)
-        cavaleiros[posicao_forte[0]].append(cavaleiro_fraco)
+        cavaleiros[posicao1[0]].remove(cavaleiro_fraco)
+        cavaleiros[posicao2[0]].remove(cavaleiro_forte)
+        cavaleiros[posicao1[0]].append(cavaleiro_forte)
+        cavaleiros[posicao2[0]].append(cavaleiro_fraco)
         vizinho = SimulatedAnnealing(corrente.dificuldade, cavaleiros, corrente.cavaleiros_faltando, corrente.current_state)
         
         # se tiver um custo melhor, retorna o vizinho
@@ -396,6 +396,18 @@ class SimulatedAnnealing:
         #print("solucao vizinho:", vizinho.cavaleiros, vizinho.get_cost())
         #print("solucao corrente:", corrente.cavaleiros, corrente.get_cost())
         return corrente
+    
+    def reposicionaCavaleiro(self, posicao_original):
+        cavaleiros = copy.deepcopy(self.cavaleiros)
+        #print(posicao_original)
+        cavaleiro = cavaleiros[posicao_original[0]][posicao_original[1]]
+        casa = randint(0, len(cavaleiros) - 1)
+        while len(cavaleiros[casa]) >= MAX_CAVALEIROS_CASA:
+            #print(casa, cavaleiros)
+            casa = randint(0, len(cavaleiros) - 1)
+        cavaleiros[posicao_original[0]].remove(cavaleiro)
+        cavaleiros[casa].append(cavaleiro)
+        return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
     
     def guloso(self):
         cavaleiros = copy.deepcopy(self.cavaleiros)
@@ -420,37 +432,19 @@ class SimulatedAnnealing:
                     cavaleiros[i].append(cavaleiro_vivo)
                     break
         
-        corrente = SimulatedAnnealing(self.dificuldade, cavaleiros, cavaleiros_faltando, self.current_state)
-        for k in range(len(PODER_COSMICO)):
-            while True:
-                # pega o caveleiro mais fraco que se encontra na casa mais dificil
-                posicao_cavaleiro_fraco = None
-                for i in range(len(cavaleiros) - 1, -1, -1):
-                    for j in range(len(cavaleiros[i])):
-                        if PODER_COSMICO[cavaleiros[i][j]] == PODER_COSMICO_ORDENADO[len(PODER_COSMICO_ORDENADO) - 1]:
-                            posicao_cavaleiro_fraco = (i, j)
-                    if posicao_cavaleiro_fraco:
-                        break
-                       
-                posicao_cavaleiro_forte = None
-                # pega o cavaleiro mais forte que se encontra numa casa facil
-                for i in range(len(cavaleiros)):
-                    for j in range(len(cavaleiros[i])):
-                        if PODER_COSMICO[cavaleiros[i][j]] == PODER_COSMICO_ORDENADO[k]:
-                            posicao_cavaleiro_forte = (i, j)
-                    if posicao_cavaleiro_forte:
-                        break
-                #print(posicao_cavaleiro_fraco)
-                #print("cavaleiro mais fraco:", cavaleiros[posicao_cavaleiro_fraco[0]][posicao_cavaleiro_fraco[1]])
-                #print(posicao_cavaleiro_forte)
-                #print("cavaleiro mais forte:", cavaleiros[posicao_cavaleiro_forte[0]][posicao_cavaleiro_forte[1]])
-                if corrente == self.swapCavaleiros(posicao_cavaleiro_fraco, posicao_cavaleiro_forte, corrente):
-                    #print("break")
-                    break
-                corrente = self.swapCavaleiros(posicao_cavaleiro_fraco, posicao_cavaleiro_forte, corrente)
-                #print("custo do corrente:", corrente.get_cost())
-                #print("fora:", corrente.get_cost())
-        
+        tentativas = 50
+        corrente = self
+        custo_corrente = self.get_cost()
+        for i in range(tentativas):
+            posicao_x = randint(0, len(corrente.cavaleiros) - 1)
+            while len(corrente.cavaleiros[posicao_x]) <= MIN_CAVALEIROS_CASA:
+                posicao_x = randint(0, len(corrente.cavaleiros) - 1)
+            posicao_y = randint(0, len(corrente.cavaleiros[posicao_x]) - 1)
+            vizinho = corrente.reposicionaCavaleiro((posicao_x, posicao_y))
+            vizinho_custo = vizinho.get_cost()
+            if vizinho_custo < custo_corrente:
+                corrente = vizinho
+                custo_corrente = vizinho_custo
         return corrente
     
     def simulated_annealing(self):

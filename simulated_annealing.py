@@ -27,9 +27,6 @@ CAVALEIROS = 5
 # Numero de vidas de cada cavaleiro
 VIDA = 5
 
-# Numero de casas do zodiaco
-CASAS_DO_ZODIACO = 12
-
 def setPoderCosmico(poderCosmico):
     global PODER_COSMICO
     PODER_COSMICO = poderCosmico
@@ -657,7 +654,7 @@ def main():
     minimo = 1000
     minimo_vizinho = None
     maximo = 0
-    execucoes = 30
+    execucoes = 5
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

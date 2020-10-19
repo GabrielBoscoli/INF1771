@@ -74,6 +74,7 @@ class SimulatedAnnealing:
         #custo += len(self.dificuldade) - self.current_state
         return custo
     
+    # primeira versao da get neighbors
     def get_neighbors(self):
         """Returns neighbors of the argument state for your solution."""
         neighbors = []
@@ -114,7 +115,8 @@ class SimulatedAnnealing:
                                                 copy.deepcopy(self.cavaleiros_faltando), self.current_state - 1))
         return neighbors
     
-    def get_neighbors2(self):
+    # segunda versao da get neighbors
+    def get_neighbors_2(self):
         neighbors = []
         for i in range(len(self.dificuldade)):
             # tira um cavaleiro
@@ -138,7 +140,8 @@ class SimulatedAnnealing:
                         neighbors.append(SimulatedAnnealing(self.dificuldade, aux_cavaleiros, aux_cavaleiros_faltando, self.current_state))
         return neighbors
     
-    def get_neighbors3(self):
+    # versao definitiva da get neighbors
+    def get_neighbors_3(self):
         
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
                      self.trocaCavaleiro, self.mudaTodasCasas,
@@ -571,7 +574,7 @@ class SimulatedAnnealing:
         return melhor_vizinho
     
     def guloso(self):
-        tentativas = 5
+        tentativas = 25
         
         corrente = self
         custo = corrente.get_cost()
@@ -579,21 +582,19 @@ class SimulatedAnnealing:
             vizinho = corrente.trocaCavaleiro()
             vizinho_cost = vizinho.get_cost()
             if vizinho_cost < custo and solucaoValida(vizinho.cavaleiros):
-                custo = vizinho.custo
+                custo = vizinho_cost
                 corrente = vizinho
-        
-        for k in range(tentativas):
             vizinho = corrente.shiftaCavaleiro()
             vizinho_cost = vizinho.get_cost()
             if vizinho_cost < custo and solucaoValida(vizinho.cavaleiros):
-                custo = vizinho.custo
+                custo = vizinho_cost
                 corrente = vizinho
         
         return corrente
     
     def simulated_annealing(self):
         """Peforms simulated annealing to find a solution"""
-        initial_temp = 100
+        initial_temp = 90
         final_temp = .1
         alpha = 0.01
         
@@ -614,7 +615,7 @@ class SimulatedAnnealing:
     
         while current_temp > final_temp:
             #neighbor = choice(solution.get_neighbors2())
-            neighbor, operacao = self.get_neighbors3()
+            neighbor, operacao = self.get_neighbors_3()
     
             neighbor_cost = neighbor.get_cost()
             

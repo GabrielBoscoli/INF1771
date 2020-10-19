@@ -85,7 +85,6 @@ def inicializaDificuldade(dificuldade):
 # O quinto elemento representa o poder cosmico do Shun
 # Retorna o poder cosmico dos cavaleiros
 def inicializaPoderCosmico(poder):
-    # será que faz sentido ser um dicionário?
     poderCosmico = dict()
     poderCosmico['Seya'] = poder[0]
     poderCosmico['Ikki'] = poder[1]
@@ -174,27 +173,19 @@ def checkNode(lista, node):
                 return True
     return False
 
-# algoritmo baseado em https://brilliant.org/wiki/a-star-search/
-# principalmente -> https://www.geeksforgeeks.org/a-search-algorithm/
-# https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 def aStar(mapa, dificuldade, manhattan):
     openList = []
     node = Node(CASA_INICIAL, None, 0, 0)
     heappush(openList, node)
     closedList = []
     while(len(openList) > 0):
-        #exibeHeap(openList)
-        #print("while")
         q = heappop(openList)
         interface.pintaPosicao(q.coords[0], q.coords[1], (255, 0, 0))
         interface.atualizaCusto(q.g)
-        #print(q)
         vizinhos = getVizinhos(q, mapa, dificuldade, manhattan)
         for proximo in vizinhos:
-            #print(proximo)
             if proximo.coords == CASA_FINAL:
                 coords = proximo.coords
-                # acho que tem que pegar a dificuldade do q, nao do proximo
                 proximo.g = q.g + dificuldade.get(mapa[coords[0]][coords[1]])
                 proximo.h = manhattan[coords[0]][coords[1]]
                 proximo.f = proximo.g + proximo.f
@@ -227,7 +218,6 @@ def atribuiCustoCasaEspecial(solucao, dificuldade, poderCosmico, mapa):
         for cavaleiro in solucao[i]:
             soma_poder += poderCosmico[cavaleiro]
         dificuldadeCasa = dificuldadeCasa/soma_poder
-        #dificuldadeCasa = 0
         dificuldade[str(i)] = dificuldadeCasa
         mapa[POSICAO_ZODIACO[i][0]][POSICAO_ZODIACO[i][1]] = str(i)
         
@@ -241,23 +231,14 @@ def main():
     interface.inicializaInterface(LINHAS, COLUNAS, "INF1771")
     interface.setGrid(mapa)
     interface.desenhaGrid()
-    print(mapa)
-    print(dificuldadeCasas)
-    print(poderCosmico)
-    print(manhattan)
     cavaleiros = [[], [], [], [], [], [], [], [], [], [], [], []]
+    simulated_annealing.setPoderCosmico(poderCosmico)
     resultadoCombinatoria = simulated_annealing.SimulatedAnnealing(DIFICULDADE_ZOADICO, cavaleiros, ENERGIA_CAVALEIROS).simulated_annealing()
-    atribuiCustoCasaEspecial(resultadoCombinatoria.cavaleiros, dificuldadeCasas, poderCosmico, mapa)
-    print(mapa)
-    print(dificuldadeCasas)
-    print(resultadoCombinatoria.get_cost())
     print(resultadoCombinatoria.cavaleiros)
+    atribuiCustoCasaEspecial(resultadoCombinatoria.cavaleiros, dificuldadeCasas, poderCosmico, mapa)
     resultadoBusca = aStar(mapa, dificuldadeCasas, manhattan)
     pintaCaminho(resultadoBusca)
-    print(resultadoBusca.g)
     pintaZodiaco()
-    #sleep(10)
-    #interface.pintaPosicao(21, 21, (255, 0, 0))
     sleep(2)
     interface.fechaInterface()
     

@@ -31,7 +31,7 @@ def setPoderCosmico(poderCosmico):
     global PODER_COSMICO
     PODER_COSMICO = poderCosmico
     poderes = []
-    for key, value in PODER_COSMICO:
+    for key, value in PODER_COSMICO.items():
         poderes.append(value)
     global PODER_COSMICO_ORDENADO
     PODER_COSMICO_ORDENADO = poderes.sort(reverse=True)
@@ -58,7 +58,7 @@ class SimulatedAnnealing:
         self.cavaleiros = cavaleiros
         # dicionario. chave é o nome do cavaleiro e o valor é a vida dele
         self.cavaleiros_faltando = cavaleiros_faltando
-        # qual casa está.
+        # qual casa está. essa variavel de classe caiu em desuso
         self.current_state = current_state
     
     def get_cost(self):
@@ -71,22 +71,16 @@ class SimulatedAnnealing:
             if soma_poderes == 0:
                 soma_poderes = 1
             custo += (self.dificuldade[i]/soma_poderes)
-        #custo += len(self.dificuldade) - self.current_state
         return custo
     
     # primeira versao da get neighbors
     def get_neighbors(self):
         """Returns neighbors of the argument state for your solution."""
         neighbors = []
-        #print("current", self.current_state)
-        #print("cavaleiros no curret", self.cavaleiros[self.current_state])
         # se tiver mais de um cavaleiro, tira um cavaleiro
         if len(self.cavaleiros[self.current_state]) > MIN_CAVALEIROS_CASA:
             for i in range(len(self.cavaleiros[self.current_state])):
                 aux_cavaleiros = copy.deepcopy(self.cavaleiros)
-                #print('len ', len(self.cavaleiros[self.current_state]))
-                #print('i ', i)
-                #print('cavaleiros', self.cavaleiros)
                 cavaleiro_removido = self.cavaleiros[self.current_state][i]
                 aux_cavaleiros[self.current_state].remove(cavaleiro_removido)
                 aux_cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
@@ -148,20 +142,6 @@ class SimulatedAnnealing:
                      self.redistribuiCavaleiros, self.inverteCavaleiros, self.shiftaCasas,
                      self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras, self.shiftaUmCavaleiroCadaCasa]
         
-        '''
-        
-        operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
-                     self.trocaCavaleiro, self.mudaTodasCasas,
-                     self.shiftaCasas, self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras]
-        '''
-        '''
-        
-        operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
-                     self.trocaCavaleiro, self.mudaTodasCasas,
-                     self.shiftaCasas, self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras,
-                     self.shiftaUmCavaleiroCadaCasa]
-        '''
-        
         vizinhancas = 10
         current_vizinhanca = 0
         melhor_custo = 100000000
@@ -203,7 +183,7 @@ class SimulatedAnnealing:
         self.cavaleiros_faltando = cavaleiros_faltando
     
     def trocaCasas(self):
-        tentativas = 10
+        tentativas = 20
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -223,7 +203,7 @@ class SimulatedAnnealing:
         return melhor_vizinho
     
     def shiftaCavaleiro(self):
-        tentativas = 10
+        tentativas = 20
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -258,7 +238,7 @@ class SimulatedAnnealing:
         return melhor_vizinho
     
     def shiftaCavaleiroParaTras(self):
-        tentativas = 10
+        tentativas = 20
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -312,7 +292,7 @@ class SimulatedAnnealing:
         return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
     
     def trocaCavaleiro(self):
-        tentativas = 10
+        tentativas = 20
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -488,29 +468,6 @@ class SimulatedAnnealing:
         
         return SimulatedAnnealing(self.dificuldade, cavaleiros, cavaleiros_faltando, self.current_state).mudaTodasCasas()
     
-    # faz a troca dos cavaleiros, se reduzir o custo
-    def swapCavaleiros(self, posicao1, posicao2):
-        cavaleiros = copy.deepcopy(self.cavaleiros)
-        cavaleiro_fraco = cavaleiros[posicao1[0]][posicao1[1]]
-        cavaleiro_forte = cavaleiros[posicao2[0]][posicao2[1]]
-        
-        if cavaleiro_forte in cavaleiros[posicao1[0]] or cavaleiro_fraco in cavaleiros[posicao2[0]]:
-            return self
-        
-        cavaleiros[posicao1[0]].remove(cavaleiro_fraco)
-        cavaleiros[posicao2[0]].remove(cavaleiro_forte)
-        cavaleiros[posicao1[0]].append(cavaleiro_forte)
-        cavaleiros[posicao2[0]].append(cavaleiro_fraco)
-        vizinho = SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
-        
-        # se tiver um custo melhor, retorna o vizinho
-        if (vizinho.get_cost() < self.get_cost()):
-            #print(vizinho.get_cost(), self.get_cost())
-            return vizinho
-        #print("solucao vizinho:", vizinho.cavaleiros, vizinho.get_cost())
-        #print("solucao corrente:", corrente.cavaleiros, corrente.get_cost())
-        return self
-    
     def reposicionaCavaleiro(self, posicao_original):
         cavaleiros = copy.deepcopy(self.cavaleiros)
         #print(posicao_original)
@@ -543,7 +500,7 @@ class SimulatedAnnealing:
         cavaleiros = copy.deepcopy(self.cavaleiros)
         cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
         
-        tentativas = 10
+        tentativas = 20
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -574,7 +531,7 @@ class SimulatedAnnealing:
         return melhor_vizinho
     
     def guloso(self):
-        tentativas = 25
+        tentativas = 30
         
         corrente = self
         custo = corrente.get_cost()
@@ -594,9 +551,9 @@ class SimulatedAnnealing:
     
     def simulated_annealing(self):
         """Peforms simulated annealing to find a solution"""
-        initial_temp = 90
+        initial_temp = 100
         final_temp = .1
-        alpha = 0.01
+        alpha = 0.1
         
         current_temp = initial_temp
     
@@ -606,16 +563,9 @@ class SimulatedAnnealing:
         solution = current_state
         melhor_solucao = solution
         melhor_custo = solution.get_cost()
-        
-        operacoes = {self.shiftaCavaleiro: 0, self.trocaCasas: 0, self.trocaCavaleiroVivo: 0,
-                     self.trocaCavaleiro: 0, self.shiftaCavaleiro: 0, self.mudaTodasCasas: 0,
-                     self.redistribuiCavaleiros: 0, self.inverteCavaleiros: 0, self.shiftaCasas: 0,
-                     self.trocaTodosCavaleirosXporY: 0, self.shiftaCavaleiroParaTras: 0,
-                     self.shiftaUmCavaleiroCadaCasa: 0}
     
         while current_temp > final_temp:
-            #neighbor = choice(solution.get_neighbors2())
-            neighbor, operacao = self.get_neighbors_3()
+            neighbor, operacao = solution.get_neighbors_3()
     
             neighbor_cost = neighbor.get_cost()
             
@@ -624,7 +574,6 @@ class SimulatedAnnealing:
     
             # if the new solution is better, accept it
             if cost_diff > 0:
-                operacoes[operacao] += 1
                 neighbor_guloso = neighbor.guloso()
                 guloso_cost = neighbor_guloso.get_cost()
                 solution = neighbor_guloso
@@ -637,7 +586,6 @@ class SimulatedAnnealing:
                     solution = neighbor
             # decrement the temperature
             current_temp -= alpha
-        print(operacoes)
         print(melhor_custo)
         return melhor_solucao
     

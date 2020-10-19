@@ -142,17 +142,23 @@ class SimulatedAnnealing:
         return neighbors
     
     def get_neighbors3(self):
-        
+        '''
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
-                     self.trocaCavaleiro, self.shiftaCavaleiro, self.mudaTodasCasas,
+                     self.trocaCavaleiro, self.mudaTodasCasas,
                      self.redistribuiCavaleiros, self.inverteCavaleiros, self.shiftaCasas,
                      self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras]
         '''
+        '''
         
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
-                     self.trocaCavaleiro, self.shiftaCavaleiro, self.mudaTodasCasas,
+                     self.trocaCavaleiro, self.mudaTodasCasas,
                      self.shiftaCasas, self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras]
         '''
+        
+        operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
+                     self.trocaCavaleiro, self.mudaTodasCasas,
+                     self.shiftaCasas, self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras,
+                     self.shiftaUmCavaleiroCadaCasa]
         
         vizinhancas = 10
         current_vizinhanca = 0
@@ -268,6 +274,27 @@ class SimulatedAnnealing:
                 melhor_vizinho = vizinho
                 custo = custo_vizinho
         return melhor_vizinho
+    
+    def shiftaUmCavaleiroCadaCasa(self):
+        cavaleiros = copy.deepcopy(self.cavaleiros)
+        num_casas = len(self.cavaleiros)
+        for k in range(num_casas):
+            casa_index = k
+            
+            if len(cavaleiros[casa_index]) <= MIN_CAVALEIROS_CASA:
+                continue
+                
+            cavaleiro = choice(cavaleiros[casa_index])
+            cavaleiros[casa_index].remove(cavaleiro)
+            casa_index = (casa_index + 1) % len(cavaleiros)
+            
+            casa = cavaleiros[casa_index]
+            while cavaleiro in casa or len(casa) >= MAX_CAVALEIROS_CASA:
+                casa_index = (casa_index + 1) % len(cavaleiros)
+                casa = cavaleiros[casa_index]
+            
+            casa.append(cavaleiro)
+        return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
     
     def trocaCavaleiro(self):
         cavaleiros = copy.deepcopy(self.cavaleiros)
@@ -584,25 +611,32 @@ class SimulatedAnnealing:
         current_state = self
         solution = current_state
         melhor_solucao = solution
+        melhor_custo = solution.get_cost()
         
         operacoes = {self.shiftaCavaleiro: 0, self.trocaCasas: 0, self.trocaCavaleiroVivo: 0,
                      self.trocaCavaleiro: 0, self.shiftaCavaleiro: 0, self.mudaTodasCasas: 0,
                      self.redistribuiCavaleiros: 0, self.inverteCavaleiros: 0, self.shiftaCasas: 0,
-                     self.trocaTodosCavaleirosXporY: 0, self.shiftaCavaleiroParaTras: 0}
+                     self.trocaTodosCavaleirosXporY: 0, self.shiftaCavaleiroParaTras: 0,
+                     self.shiftaUmCavaleiroCadaCasa: 0}
     
         while current_temp > final_temp:
             #neighbor = choice(solution.get_neighbors2())
             neighbor, operacao = self.get_neighbors3()
     
+            neighbor_cost = neighbor.get_cost()
+            
             # Check if neighbor is best so far
-            cost_diff = solution.get_cost() - neighbor.get_cost()
+            cost_diff = solution.get_cost() - neighbor_cost
     
             # if the new solution is better, accept it
             if cost_diff > 0:
                 operacoes[operacao] += 1
-                solution = neighbor.guloso()
-                if solucaoValida(solution.cavaleiros):
+                neighbor_guloso = neighbor.guloso()
+                guloso_cost = neighbor_guloso.get_cost()
+                solution = neighbor_guloso
+                if solucaoValida(solution.cavaleiros) and guloso_cost < melhor_custo:
                     melhor_solucao = solution
+                    melhor_custo = guloso_cost
             # if the new solution is not better, accept it with a probability of e^(-cost/temp)
             else:
                 if uniform(0, 1) < exp(cost_diff / current_temp):
@@ -620,7 +654,7 @@ def main():
     minimo = 1000
     minimo_vizinho = None
     maximo = 0
-    execucoes = 10
+    execucoes = 30
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

@@ -296,45 +296,43 @@ class SimulatedAnnealing:
         return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
     
     def trocaCavaleiro(self):
-        cavaleiros = copy.deepcopy(self.cavaleiros)
-        
-        # escolhe dois cavaleiros diferentes aleatoriamente
-        cavaleiro1, cavaleiro2 = choices(NOME_CAVALEIROS, k=2)
-        while (cavaleiro1 == cavaleiro2):
-            cavaleiro1, cavaleiro2 = choices(NOME_CAVALEIROS, k=2)
-
-        casas_sem_cavaleiro1 = []
-        casas_com_cavaleiro1 = []
-        # acha casa que nao tem o cavaleiro 1
-        for i in range(len(cavaleiros)):
-            if cavaleiro1 not in cavaleiros[i]:
-                casas_sem_cavaleiro1.append(i)
-            else:
-                casas_com_cavaleiro1.append(i)
+        tentativas = 10
+        melhor_vizinho = None
+        custo = None
+        for k in range(tentativas):
+            cavaleiros = copy.deepcopy(self.cavaleiros)
+            
+            # escolhe duas casas diferentes
+            casa1, casa2 = choices(range(0, len(cavaleiros)), k=2)
+            while casa1 == casa2 or len(set(cavaleiros[casa1] + cavaleiros[casa2])) == len(cavaleiros[casa1]):
+                casa1, casa2 = choices(range(0, len(cavaleiros)), k=2)
                 
-        #cavaleiro2 = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS) - 1)]
-        casas_sem_cavaleiro2 = []
-        casas_com_cavaleiro2 = []
-        # acha casa que nao tem o cavaleiro 2
-        for i in range(len(cavaleiros)):
-            if cavaleiro2 not in cavaleiros[i]:
-                casas_sem_cavaleiro2.append(i)
-            else:
-                casas_com_cavaleiro2.append(i)
+            # escolhe cavaleiros diferentes de cada casa
+            cavaleiro1 = choice(cavaleiros[casa1])
+            cavaleiro2 = choice(cavaleiros[casa2])
+            while cavaleiro1 == cavaleiro2:
+                cavaleiro1 = choice(cavaleiros[casa1])
+                cavaleiro2 = choice(cavaleiros[casa2])
                 
-        casa_sem_cavaleiro1 = choice(casas_sem_cavaleiro1)
-        casa_sem_cavaleiro2 = choice(casas_sem_cavaleiro2)
-        casa_com_cavaleiro1 = choice(casas_com_cavaleiro1)
-        casa_com_cavaleiro2 = choice(casas_com_cavaleiro2)
+            # remove os cavaleiros de suas casas originais
+            cavaleiros[casa1].remove(cavaleiro1)
+            cavaleiros[casa2].remove(cavaleiro2)
+            
+            # adiciona os cavaleiros em suas novas casas
+            cavaleiros[casa1].append(cavaleiro2)
+            cavaleiros[casa2].append(cavaleiro1)
+            
+            vizinho = SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
+            custo_vizinho = vizinho.get_cost()
+            if melhor_vizinho:
+                if custo_vizinho < custo:
+                    melhor_vizinho = vizinho
+                    custo = custo_vizinho
+            else:
+                melhor_vizinho = vizinho
+                custo = custo_vizinho
         
-        # remove cavaleiro 1 da sua casa original e insere na nova
-        cavaleiros[casa_com_cavaleiro1].remove(cavaleiro1)
-        cavaleiros[casa_sem_cavaleiro1].append(cavaleiro1)
-        # remove cavaleiro 2 da sua casa original e insere na nova
-        cavaleiros[casa_com_cavaleiro2].remove(cavaleiro2)
-        cavaleiros[casa_sem_cavaleiro2].append(cavaleiro2)
-        
-        return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
+        return melhor_vizinho
         
     def trocaCavaleiroVivo(self):
         cavaleiros = copy.deepcopy(self.cavaleiros)

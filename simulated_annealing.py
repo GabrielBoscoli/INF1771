@@ -144,7 +144,8 @@ class SimulatedAnnealing:
     def get_neighbors3(self):
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
                      self.trocaCavaleiro, self.shiftaCavaleiro, self.mudaTodasCasas,
-                     self.redistribuiCavaleiros, self.inverteCavaleiros, self.shiftaCasas]
+                     self.redistribuiCavaleiros, self.inverteCavaleiros, self.shiftaCasas,
+                     self.trocaTodosCavaleirosXporY]
         vizinhancas = 10
         current_vizinhanca = 0
         melhor_custo = 100000000
@@ -425,6 +426,35 @@ class SimulatedAnnealing:
                 custo = custo_vizinho
         return melhor_vizinho
     
+    def trocaTodosCavaleirosXporY(self):
+        cavaleiros = copy.deepcopy(self.cavaleiros)
+        cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
+        
+        cavaleiro_x, cavaleiro_y = choices(NOME_CAVALEIROS, k=2)
+        while(cavaleiro_x == cavaleiro_y):
+            cavaleiro_x, cavaleiro_y = choices(NOME_CAVALEIROS, k=2)
+        
+        casas_cavaleiro_x = []
+        casas_cavaleiro_y = []
+                    
+        for i, casa in enumerate(cavaleiros):
+            if cavaleiro_x in casa:
+                casas_cavaleiro_x.append(i)
+                casa.remove(cavaleiro_x)
+            if cavaleiro_y in casa:
+                casas_cavaleiro_y.append(i)
+                casa.remove(cavaleiro_y)
+        
+        cavaleiros_faltando[cavaleiro_x], cavaleiros_faltando[cavaleiro_y] = cavaleiros_faltando[cavaleiro_y], cavaleiros_faltando[cavaleiro_x]
+        
+        for i in range(len(cavaleiros)):
+            for j in range(len(cavaleiros[i])):
+                if i in casas_cavaleiro_x:
+                    cavaleiros[i].append(cavaleiro_y)
+                if i in casas_cavaleiro_y:
+                    cavaleiros[i].append(cavaleiro_x)
+        return SimulatedAnnealing(self.dificuldade, cavaleiros, cavaleiros_faltando, self.current_state)
+    
     def guloso(self):
         cavaleiros = copy.deepcopy(self.cavaleiros)
         cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
@@ -506,7 +536,7 @@ def main():
     minimo = 1000
     minimo_vizinho = None
     maximo = 0
-    execucoes = 1
+    execucoes = 5
     for i in range(execucoes):
         resposta = SimulatedAnnealing(dificuldade, cavaleiros, cavaleiros_faltando).simulated_annealing()
         custo = resposta.get_cost()

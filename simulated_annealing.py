@@ -433,26 +433,18 @@ class SimulatedAnnealing:
         cavaleiro_x, cavaleiro_y = choices(NOME_CAVALEIROS, k=2)
         while(cavaleiro_x == cavaleiro_y):
             cavaleiro_x, cavaleiro_y = choices(NOME_CAVALEIROS, k=2)
-        
-        casas_cavaleiro_x = []
-        casas_cavaleiro_y = []
                     
         for i, casa in enumerate(cavaleiros):
-            if cavaleiro_x in casa:
-                casas_cavaleiro_x.append(i)
+            if cavaleiro_x in casa and cavaleiro_y in casa:
+                continue
+            elif cavaleiro_x in casa:
                 casa.remove(cavaleiro_x)
-            if cavaleiro_y in casa:
-                casas_cavaleiro_y.append(i)
+                casa.append(cavaleiro_y)
+            elif cavaleiro_y in casa:
                 casa.remove(cavaleiro_y)
+                casa.append(cavaleiro_x)
         
         cavaleiros_faltando[cavaleiro_x], cavaleiros_faltando[cavaleiro_y] = cavaleiros_faltando[cavaleiro_y], cavaleiros_faltando[cavaleiro_x]
-        
-        for i in range(len(cavaleiros)):
-            for j in range(len(cavaleiros[i])):
-                if i in casas_cavaleiro_x:
-                    cavaleiros[i].append(cavaleiro_y)
-                if i in casas_cavaleiro_y:
-                    cavaleiros[i].append(cavaleiro_x)
         return SimulatedAnnealing(self.dificuldade, cavaleiros, cavaleiros_faltando, self.current_state)
     
     def guloso(self):

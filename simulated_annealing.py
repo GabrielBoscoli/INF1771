@@ -571,41 +571,24 @@ class SimulatedAnnealing:
         return melhor_vizinho
     
     def guloso(self):
-        cavaleiros = copy.deepcopy(self.cavaleiros)
-        cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
-        #print(self.cavaleiros)
+        tentativas = 5
         
-        cavaleiro_mais_fraco = None
-        cavaleiro_vivo = None
-        for cavaleiro in NOME_CAVALEIROS:
-            if PODER_COSMICO[cavaleiro] == PODER_COSMICO_ORDENADO[-1]:
-                cavaleiro_mais_fraco = cavaleiro
-            if cavaleiros_faltando[cavaleiro] > 0:
-                cavaleiro_vivo = cavaleiro
-        # se o cavaleiro mais fraco não está vivo, temos que deixa-lo vivo
-        if cavaleiro_mais_fraco != cavaleiro_vivo:
-            # tenta substituir o cavaleiro mais fraco pelo cavaleiro que está vivo
-            for i in range(len(cavaleiros)):
-                if cavaleiro_mais_fraco in cavaleiros[i] and cavaleiro_vivo not in cavaleiros[i]:
-                    cavaleiros_faltando[cavaleiro_mais_fraco] += 1
-                    cavaleiros[i].remove(cavaleiro_mais_fraco)
-                    cavaleiros_faltando[cavaleiro_vivo] -= 1
-                    cavaleiros[i].append(cavaleiro_vivo)
-                    break
-        
-        tentativas = 50
         corrente = self
-        for i in range(tentativas):
-            posicao_x, posicao_xx = choices(range(0, len(cavaleiros)), k=2)
-            while posicao_x == posicao_xx:
-                posicao_x, posicao_xx = choices(range(0, len(cavaleiros)), k=2)
-            posicao_y = choice(range(0, len(cavaleiros[posicao_x])))
-            posicao_yy = choice(range(0, len(cavaleiros[posicao_xx])))
-            
-            vizinho = corrente.swapCavaleiros((posicao_x, posicao_y), (posicao_xx, posicao_yy))
-            if vizinho != corrente:
-                i = 0
+        custo = corrente.get_cost()
+        for k in range(tentativas):
+            vizinho = corrente.trocaCavaleiro()
+            vizinho_cost = vizinho.get_cost()
+            if vizinho_cost < custo and solucaoValida(vizinho.cavaleiros):
+                custo = vizinho.custo
                 corrente = vizinho
+        
+        for k in range(tentativas):
+            vizinho = corrente.shiftaCavaleiro()
+            vizinho_cost = vizinho.get_cost()
+            if vizinho_cost < custo and solucaoValida(vizinho.cavaleiros):
+                custo = vizinho.custo
+                corrente = vizinho
+        
         return corrente
     
     def simulated_annealing(self):

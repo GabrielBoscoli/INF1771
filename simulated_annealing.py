@@ -200,11 +200,24 @@ class SimulatedAnnealing:
         self.cavaleiros_faltando = cavaleiros_faltando
     
     def trocaCasas(self):
-        cavaleiros = copy.deepcopy(self.cavaleiros)
-        casa1 = randint(0,len(cavaleiros) - 1)
-        casa2 = randint(0,len(cavaleiros) - 1)
-        cavaleiros[casa1], cavaleiros[casa2] = cavaleiros[casa2], cavaleiros[casa1]
-        return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
+        tentativas = 10
+        melhor_vizinho = None
+        custo = None
+        for k in range(tentativas):
+            cavaleiros = copy.deepcopy(self.cavaleiros)
+            casa1 = randint(0,len(cavaleiros) - 1)
+            casa2 = randint(0,len(cavaleiros) - 1)
+            cavaleiros[casa1], cavaleiros[casa2] = cavaleiros[casa2], cavaleiros[casa1]
+            vizinho = SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
+            custo_vizinho = vizinho.get_cost()
+            if melhor_vizinho:
+                if custo_vizinho < custo:
+                    melhor_vizinho = vizinho
+                    custo = custo_vizinho
+            else:
+                melhor_vizinho = vizinho
+                custo = custo_vizinho
+        return melhor_vizinho
     
     def shiftaCavaleiro(self):
         tentativas = 10

@@ -142,23 +142,25 @@ class SimulatedAnnealing:
         return neighbors
     
     def get_neighbors3(self):
-        '''
+        
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
                      self.trocaCavaleiro, self.mudaTodasCasas,
                      self.redistribuiCavaleiros, self.inverteCavaleiros, self.shiftaCasas,
-                     self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras]
-        '''
+                     self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras, self.shiftaUmCavaleiroCadaCasa]
+        
         '''
         
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
                      self.trocaCavaleiro, self.mudaTodasCasas,
                      self.shiftaCasas, self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras]
         '''
+        '''
         
         operacoes = [self.shiftaCavaleiro, self.trocaCasas, self.trocaCavaleiroVivo,
                      self.trocaCavaleiro, self.mudaTodasCasas,
                      self.shiftaCasas, self.trocaTodosCavaleirosXporY, self.shiftaCavaleiroParaTras,
                      self.shiftaUmCavaleiroCadaCasa]
+        '''
         
         vizinhancas = 10
         current_vizinhanca = 0
@@ -208,7 +210,7 @@ class SimulatedAnnealing:
         return SimulatedAnnealing(self.dificuldade, cavaleiros, self.cavaleiros_faltando, self.current_state)
     
     def shiftaCavaleiro(self):
-        tentativas = 5
+        tentativas = 10
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -243,7 +245,7 @@ class SimulatedAnnealing:
         return melhor_vizinho
     
     def shiftaCavaleiroParaTras(self):
-        tentativas = 5
+        tentativas = 10
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -306,7 +308,7 @@ class SimulatedAnnealing:
 
         casas_sem_cavaleiro1 = []
         casas_com_cavaleiro1 = []
-        # acha casa que nao tem o cavaleiro
+        # acha casa que nao tem o cavaleiro 1
         for i in range(len(cavaleiros)):
             if cavaleiro1 not in cavaleiros[i]:
                 casas_sem_cavaleiro1.append(i)
@@ -316,7 +318,7 @@ class SimulatedAnnealing:
         #cavaleiro2 = NOME_CAVALEIROS[randint(0,len(NOME_CAVALEIROS) - 1)]
         casas_sem_cavaleiro2 = []
         casas_com_cavaleiro2 = []
-        # acha casa que nao tem o cavaleiro
+        # acha casa que nao tem o cavaleiro 2
         for i in range(len(cavaleiros)):
             if cavaleiro2 not in cavaleiros[i]:
                 casas_sem_cavaleiro2.append(i)
@@ -530,7 +532,7 @@ class SimulatedAnnealing:
         cavaleiros = copy.deepcopy(self.cavaleiros)
         cavaleiros_faltando = copy.deepcopy(self.cavaleiros_faltando)
         
-        tentativas = 5
+        tentativas = 10
         melhor_vizinho = None
         custo = None
         for k in range(tentativas):
@@ -644,6 +646,7 @@ class SimulatedAnnealing:
             # decrement the temperature
             current_temp -= alpha
         print(operacoes)
+        print(melhor_custo)
         return melhor_solucao
     
 def main():    

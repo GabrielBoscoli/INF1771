@@ -559,8 +559,8 @@ class SimulatedAnnealing:
     
         # Start by initializing the current state with the initial state
         self.geraEstadoInicial()
-        current_state = self
-        solution = current_state
+
+        solution = self
         melhor_solucao = solution
         melhor_custo = solution.get_cost()
     

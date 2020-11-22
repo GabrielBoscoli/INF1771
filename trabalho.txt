@@ -26,3 +26,8 @@ Média: 380.87797734222033
 Custo Mínimo: 374.7164435181677
 Solucao Mínima: [['Shiryu', 'Shun'], ['Shiryu', 'Shun'], ['Shiryu', 'Shun'], ['Ikki', 'Hyoga'], ['Ikki', 'Hyoga'], ['Seya', 'Shiryu'], ['Ikki', 'Shun'], ['Ikki', 'Hyoga'], ['Seya', 'Hyoga'], ['Seya', 'Hyoga'], ['Ikki', 'Seya'], ['Seya', 'Shiryu']]
 Máximo: 386.4471961211092
+
+trabalho 2
+https://github.com/Paradigmas-2-2017/akinator-of-thrones
+https://github.com/CarolBrandao/akinator/blob/master/Akinator.pl
+https://raw.githubusercontent.com/oliveiraMonica/Akinator-Hero/master/akinator_2.pl

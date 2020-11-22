@@ -1,0 +1,109 @@
+
+deducao :- hipotese(Personagem/*, Personagem_img*/),
+		write('É um(a) '),
+		write(Personagem),
+		write('?'),
+		nl,
+		undo.
+		/* ,
+		shell(Personagem_img). */
+
+
+/* hipoteses */
+
+/*
+hipotese(homem_aranha, 'fotos-windows.reg homem_aranha.jpg')	:- homem_aranha, !.
+hipotese(thor, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- thor, !.
+hipotese(homem_de_ferro, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- homem_de_ferro, !.
+hipotese(batman, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia batman.jpg')	:- batman, !.
+hipotese(jean_grey, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- jean_grey, !.
+hipotese(mulher_maravilha, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- mulher_maravilha, !.
+hipotese(mulher_gato, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- mulher_gato, !.
+*/
+
+hipotese(zebra)	:- zebra, !.
+hipotese(leao)	:- leao, !.
+hipotese(aguia)	:- aguia, !.
+hipotese(pinguim)	:- pinguim, !.
+hipotese(lagarto)	:- lagarto, !.
+
+hipotese(nao_encontrado).
+
+
+/* regras de identificacao de cada animal */
+		  
+zebra :- mamifero,
+		  listras.
+		  
+leao :- mamifero.
+
+aguia :- passaro,
+		  voa.
+		  
+pinguim :- passaro.
+		  
+lagarto.
+
+/*
+mulher_maravilha :- mulher,
+		  preto,
+		  cabelo_longo,
+		  super_poder,
+		  estatura_alta,
+		  verify('Conhecida como Diana Prince, filha da Rainha Hipólita').
+
+mulher_gato :- mulher,
+		  preto,
+		  sem_poder,
+		  cabelo_curto,
+		  estatura_baixa,
+		  verify('Uma criminosa de Gotham City').
+*/
+
+/* regras de classificação */
+
+mamifero :- verify('É um mamífero'), !.
+listras :- verify('Tem listras'), !.
+passaro :- verify('É um pássaro'), !.
+voa :- verify('Ele voa'), !.
+/*
+mulher	:- verify('e mulher'), !.
+homem	:- verify('e homem'), !.
+loiro   :- verify('tem cabelo loiro').
+preto 	:- verify('tem cabelo preto').
+ruivo 	:- verify('tem cabelo ruivo').
+super_poder :- verify('tem super poder'), !.
+sem_poder :- verify('nao tem super poder'), !.
+cabelo_longo :- verify('tem cabelo longo').
+cabelo_medio :- verify('tem cabelo medio').
+cabelo_curto :- verify('tem cabelo curto').
+estatura_baixa :- verify('estatura baixa').
+estatura_media :- verify('estatura media').
+estatura_alta  :- verify('estatura alta').
+*/
+			  
+
+
+
+/* perguntas */
+ask(Pergunta) :-
+	/* write('O(a) seu personagem tem a seguinte caracteristica: '), */
+	write(Pergunta),
+	write('? '),
+	read(Resposta),
+	nl,
+	( (Resposta == sim ; Resposta == s)
+		->
+		assert(sim(Pergunta)) ;
+		assert(nao(Pergunta)), fail).
+
+:- dynamic sim/1, nao/1.
+
+/* verificar */
+verify(X) :-
+	(sim(X)	->	true ;	(nao(X)	 ->	 fail ;	 ask(X))).
+
+/* limpar os asserts */
+undo :- retract(sim(_)), fail.
+undo :- retract(nao(_)), fail.
+undo.

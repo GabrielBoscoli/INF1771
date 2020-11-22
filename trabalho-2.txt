@@ -1,9 +1,21 @@
-
+/*
 deducao :- hipotese(Personagem/*, Personagem_img*/),
 		write('É um(a) '),
 		write(Personagem),
 		write('?'),
 		nl,
+		undo.
+		/* ,
+		shell(Personagem_img). */
+*/
+
+deducao :- hipotese(Personagem/*, Personagem_img*/),
+		write('É um(a) '),
+		write(Personagem),
+		write('? (s/n)'),
+    	read(Resposta),
+		nl,
+		( (Resposta == sim ; Resposta == s) -> write('YAY! Adivinhei seu animal!') ; wrong ),
 		undo.
 		/* ,
 		shell(Personagem_img). */
@@ -62,10 +74,10 @@ mulher_gato :- mulher,
 
 /* regras de classificação */
 
-mamifero :- verify('É um mamífero'), !.
-listras :- verify('Tem listras'), !.
-passaro :- verify('É um pássaro'), !.
-voa :- verify('Ele voa'), !.
+mamifero :- verify('É um mamífero?'), !.
+listras :- verify('Tem listras?'), !.
+passaro :- verify('É um pássaro?'), !.
+voa :- verify('Ele voa?'), !.
 /*
 mulher	:- verify('e mulher'), !.
 homem	:- verify('e homem'), !.
@@ -89,7 +101,7 @@ estatura_alta  :- verify('estatura alta').
 ask(Pergunta) :-
 	/* write('O(a) seu personagem tem a seguinte caracteristica: '), */
 	write(Pergunta),
-	write('? '),
+	write(' (s/n)'),
 	read(Resposta),
 	nl,
 	( (Resposta == sim ; Resposta == s)
@@ -102,6 +114,9 @@ ask(Pergunta) :-
 /* verificar */
 verify(X) :-
 	(sim(X)	->	true ;	(nao(X)	 ->	 fail ;	 ask(X))).
+	
+/* quando a deducao está errada */
+wrong.
 
 /* limpar os asserts */
 undo :- retract(sim(_)), fail.

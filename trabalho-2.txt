@@ -9,13 +9,13 @@ deducao :- hipotese(Personagem/*, Personagem_img*/),
 		shell(Personagem_img). */
 */
 
-deducao :- hipotese(Personagem/*, Personagem_img*/),
+deducao :- hipotese(Animal/*, Personagem_img*/),
 		write('É um(a) '),
-		write(Personagem),
+		write(Animal),
 		write('? (s/n)'),
-    	read(Resposta),
+    read(Resposta),
 		nl,
-		( (Resposta == sim ; Resposta == s) -> write('YAY! Adivinhei seu animal!') ; wrong ),
+		( (Resposta == sim ; Resposta == s) -> write('YAY! Adivinhei seu animal!') ; wrong(Animal) ),
 		undo.
 		/* ,
 		shell(Personagem_img). */
@@ -99,7 +99,7 @@ estatura_alta  :- verify('estatura alta').
 
 /* perguntas */
 ask(Pergunta) :-
-	/* write('O(a) seu personagem tem a seguinte caracteristica: '), */
+	/* write('O(a) seu animal tem a seguinte caracteristica: '), */
 	write(Pergunta),
 	write(' (s/n)'),
 	read(Resposta),
@@ -116,7 +116,37 @@ verify(X) :-
 	(sim(X)	->	true ;	(nao(X)	 ->	 fail ;	 ask(X))).
 	
 /* quando a deducao está errada */
-wrong.
+wrong(Animal) :-
+	write('Puxa! Eu não sei! Qual animal pensou?'),
+	read(Resposta),
+	write('Qual pergunta devo fazer para distinguir '),
+	write(Resposta),
+	write(' de '),
+	write(Animal),
+	write('?'),
+	read(NovaPergunta),
+	/*
+	write('Agora digite qual a resposta certa para '),
+	write(Resposta),
+	write(' (s/n): '),
+	*/
+	/*
+	string_concat(Resposta, '_', X),
+	string_concat(X, Animal, Y),
+	atom_string(A, Y),
+	assert(A :- voa),
+	*/
+	clause(Animal, B),
+	assert((Resposta :- B, verify(NovaPergunta))),
+	write(NovaPergunta).
+	
+/* salva em disco a base de conhecimento */
+my_save(ToFile) :-      
+       telling(Old),      /* current write output */ 
+       tell(ToFile),      /* open this file */ 
+       listing,           /* list all clauses in memory */ 
+       told,              /* close ToFile */ 
+       tell(Old).         /* resume this output */
 
 /* limpar os asserts */
 undo :- retract(sim(_)), fail.

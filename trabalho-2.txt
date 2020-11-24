@@ -1,13 +1,9 @@
-/*
-deducao :- hipotese(Personagem/*, Personagem_img*/),
-		write('É um(a) '),
-		write(Personagem),
-		write('?'),
+/* consult("C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-2.txt"). */
+
+go :- write('Bem-vindo ao jogo dos animais. Vou tentar adivinhar qual está pensando.'),
 		nl,
-		undo.
-		/* ,
-		shell(Personagem_img). */
-*/
+		nl,
+		deducao.
 
 deducao :- hipotese(Animal/*, Personagem_img*/),
 		write('É um(a) '),
@@ -33,28 +29,46 @@ hipotese(mulher_maravilha, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Co
 hipotese(mulher_gato, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- mulher_gato, !.
 */
 
+:- dynamic hipotese/1.
+
 hipotese(zebra)	:- zebra, !.
 hipotese(leao)	:- leao, !.
 hipotese(aguia)	:- aguia, !.
 hipotese(pinguim)	:- pinguim, !.
 hipotese(lagarto)	:- lagarto, !.
+hipotese(cobra)	:- cobra, !.
 
 hipotese(nao_encontrado).
 
 
 /* regras de identificacao de cada animal */
 		  
+:- dynamic zebra/0.
+
 zebra :- mamifero,
 		  listras.
+			
+:- dynamic leao/0.
 		  
 leao :- mamifero.
 
+:- dynamic aguia/0.
+
 aguia :- passaro,
 		  voa.
+			
+:- dynamic pinguim/0.
 		  
 pinguim :- passaro.
+
+:- dynamic lagarto/0.
 		  
-lagarto.
+lagarto :- verify_negation("Rasteija?").
+
+:- dynamic cobra/0.
+		  
+cobra :- true,
+			verify("Rasteija?").
 
 /*
 mulher_maravilha :- mulher,
@@ -78,24 +92,6 @@ mamifero :- verify('É um mamífero?'), !.
 listras :- verify('Tem listras?'), !.
 passaro :- verify('É um pássaro?'), !.
 voa :- verify('Ele voa?'), !.
-/*
-mulher	:- verify('e mulher'), !.
-homem	:- verify('e homem'), !.
-loiro   :- verify('tem cabelo loiro').
-preto 	:- verify('tem cabelo preto').
-ruivo 	:- verify('tem cabelo ruivo').
-super_poder :- verify('tem super poder'), !.
-sem_poder :- verify('nao tem super poder'), !.
-cabelo_longo :- verify('tem cabelo longo').
-cabelo_medio :- verify('tem cabelo medio').
-cabelo_curto :- verify('tem cabelo curto').
-estatura_baixa :- verify('estatura baixa').
-estatura_media :- verify('estatura media').
-estatura_alta  :- verify('estatura alta').
-*/
-			  
-
-
 
 /* perguntas */
 ask(Pergunta) :-
@@ -108,6 +104,18 @@ ask(Pergunta) :-
 		->
 		assert(sim(Pergunta)) ;
 		assert(nao(Pergunta)), fail).
+		
+/* perguntas no caso de negacao*/
+ask_negation(Pergunta) :-
+	/* write('O(a) seu animal tem a seguinte caracteristica: '), */
+	write(Pergunta),
+	write(' (s/n)'),
+	read(Resposta),
+	nl,
+	( (Resposta == sim ; Resposta == s)
+		->
+		assert(sim(Pergunta)), fail ;
+		assert(nao(Pergunta))).
 
 :- dynamic sim/1, nao/1.
 
@@ -115,30 +123,43 @@ ask(Pergunta) :-
 verify(X) :-
 	(sim(X)	->	true ;	(nao(X)	 ->	 fail ;	 ask(X))).
 	
+/* verificar a negacao */
+verify_negation(X) :-
+	(sim(X)	->	false ;	(nao(X)	 ->	 true ;	 ask_negation(X))).
+
 /* quando a deducao está errada */
 wrong(Animal) :-
 	write('Puxa! Eu não sei! Qual animal pensou?'),
-	read(Resposta),
+	read(NovoAnimal),
 	write('Qual pergunta devo fazer para distinguir '),
-	write(Resposta),
+	write(NovoAnimal),
 	write(' de '),
 	write(Animal),
 	write('?'),
 	read(NovaPergunta),
-	/*
 	write('Agora digite qual a resposta certa para '),
-	write(Resposta),
+	write(NovoAnimal),
 	write(' (s/n): '),
-	*/
-	/*
-	string_concat(Resposta, '_', X),
-	string_concat(X, Animal, Y),
-	atom_string(A, Y),
-	assert(A :- voa),
-	*/
+	read(Resposta),
+	( (Resposta == sim ; Resposta == s) -> resposta_sim(Animal, NovoAnimal, NovaPergunta) ; resposta_nao(Animal, NovoAnimal, NovaPergunta) ),
+	retract(hipotese(nao_encontrado)),
+	assert((hipotese(NovoAnimal) :- NovoAnimal, !)),
+	assert(hipotese(nao_encontrado)).
+	
+/* quando a resposta para a nova pergunta for positiva */
+resposta_sim(Animal, NovoAnimal, NovaPergunta) :-
 	clause(Animal, B),
-	assert((Resposta :- B, verify(NovaPergunta))),
-	write(NovaPergunta).
+	retractall(Animal),
+	atom_string(NovaPergunta, S),
+	assert((NovoAnimal :- B, verify(S))),
+	assert((Animal :- B, verify_negation(S))).
+	
+/* quando a resposta para a nova pergunta for negativa */
+resposta_nao(Animal, NovoAnimal, NovaPergunta) :-
+	clause(Animal, B),
+	retractall(Animal),
+	assert((Animal :- B, verify(NovaPergunta))),
+	assert((NovoAnimal :- B, verify_negation(NovaPergunta))).
 	
 /* salva em disco a base de conhecimento */
 my_save(ToFile) :-      

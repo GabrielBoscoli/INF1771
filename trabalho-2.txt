@@ -5,7 +5,7 @@ go :- write('Bem-vindo ao jogo dos animais. Vou tentar adivinhar qual está pens
 		nl,
 		deducao.
 
-deducao :- hipotese(Animal/*, Personagem_img*/),
+deducao :- hipotese(Animal),
 		write('É um(a) '),
 		write(Animal),
 		write('? (s/n)'),
@@ -13,22 +13,9 @@ deducao :- hipotese(Animal/*, Personagem_img*/),
 		nl,
 		( (Resposta == sim ; Resposta == s) -> write('YAY! Adivinhei seu animal!') ; wrong(Animal) ),
 		undo.
-		/* ,
-		shell(Personagem_img). */
 
 
 /* hipoteses */
-
-/*
-hipotese(homem_aranha, 'fotos-windows.reg homem_aranha.jpg')	:- homem_aranha, !.
-hipotese(thor, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- thor, !.
-hipotese(homem_de_ferro, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- homem_de_ferro, !.
-hipotese(batman, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia batman.jpg')	:- batman, !.
-hipotese(jean_grey, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- jean_grey, !.
-hipotese(mulher_maravilha, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- mulher_maravilha, !.
-hipotese(mulher_gato, 'C:\Users\mocxo\Desktop\PROLOG_PARADIGMAS-master - Copia homem_aranha.jpg')	:- mulher_gato, !.
-*/
-
 :- dynamic hipotese/1.
 
 hipotese(zebra)	:- zebra, !.
@@ -39,7 +26,6 @@ hipotese(lagarto)	:- lagarto, !.
 hipotese(cobra)	:- cobra, !.
 
 hipotese(nao_encontrado).
-
 
 /* regras de identificacao de cada animal */
 		  
@@ -70,21 +56,6 @@ lagarto :- verify_negation("Rasteija?").
 cobra :- true,
 			verify("Rasteija?").
 
-/*
-mulher_maravilha :- mulher,
-		  preto,
-		  cabelo_longo,
-		  super_poder,
-		  estatura_alta,
-		  verify('Conhecida como Diana Prince, filha da Rainha Hipólita').
-
-mulher_gato :- mulher,
-		  preto,
-		  sem_poder,
-		  cabelo_curto,
-		  estatura_baixa,
-		  verify('Uma criminosa de Gotham City').
-*/
 
 /* regras de classificação */
 

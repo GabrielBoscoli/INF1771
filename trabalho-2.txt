@@ -3,7 +3,8 @@
 go :- write('Bem-vindo ao jogo dos animais. Vou tentar adivinhar qual está pensando.'),
 		nl,
 		nl,
-		deducao.
+		deducao,
+		my_save('C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-3.txt').
 
 deducao :- hipotese(Animal),
 		write('É um(a) '),
@@ -68,7 +69,7 @@ voa :- verify('Ele voa?'), !.
 ask(Pergunta) :-
 	/* write('O(a) seu animal tem a seguinte caracteristica: '), */
 	write(Pergunta),
-	write(' (s/n)'),
+	write(' (s/n): '),
 	read(Resposta),
 	nl,
 	( (Resposta == sim ; Resposta == s)
@@ -80,7 +81,7 @@ ask(Pergunta) :-
 ask_negation(Pergunta) :-
 	/* write('O(a) seu animal tem a seguinte caracteristica: '), */
 	write(Pergunta),
-	write(' (s/n)'),
+	write(' (s/n): '),
 	read(Resposta),
 	nl,
 	( (Resposta == sim ; Resposta == s)
@@ -133,8 +134,8 @@ resposta_nao(Animal, NovoAnimal, NovaPergunta) :-
 	assert((NovoAnimal :- B, verify_negation(NovaPergunta))).
 	
 /* salva em disco a base de conhecimento */
-my_save(ToFile) :-      
-       telling(Old),      /* current write output */ 
+my_save(ToFile) :-
+       telling(Old),      /* current write output */
        tell(ToFile),      /* open this file */ 
        listing,           /* list all clauses in memory */ 
        told,              /* close ToFile */ 

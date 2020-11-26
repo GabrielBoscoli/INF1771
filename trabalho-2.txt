@@ -4,7 +4,7 @@ go :- write('Bem-vindo ao jogo dos animais. Vou tentar adivinhar qual está pens
 		nl,
 		nl,
 		deducao,
-		my_save('C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-3.txt').
+		my_save('C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-2.txt').
 
 deducao :- hipotese(Animal),
 		write('É um(a) '),
@@ -24,7 +24,6 @@ hipotese(leao)	:- leao, !.
 hipotese(aguia)	:- aguia, !.
 hipotese(pinguim)	:- pinguim, !.
 hipotese(lagarto)	:- lagarto, !.
-hipotese(cobra)	:- cobra, !.
 
 hipotese(nao_encontrado).
 
@@ -50,13 +49,7 @@ pinguim :- passaro.
 
 :- dynamic lagarto/0.
 		  
-lagarto :- verify_negation("Rasteija?").
-
-:- dynamic cobra/0.
-		  
-cobra :- true,
-			verify("Rasteija?").
-
+lagarto.
 
 /* regras de classificação */
 

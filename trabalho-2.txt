@@ -36,27 +36,40 @@ zebra :- mamifero,
 			
 :- dynamic leao/0.
 		  
-leao :- mamifero.
+leao :- nao_listras,
+	mamifero.
 
 :- dynamic aguia/0.
 
-aguia :- passaro,
-		  voa.
+aguia :- nao_mamifero,
+	nao_listras,
+	passaro,
+	voa.
 			
 :- dynamic pinguim/0.
 		  
-pinguim :- passaro.
+pinguim :- nao_mamifero,
+	nao_listras,
+	passaro,
+	nao_voa.
 
 :- dynamic lagarto/0.
 		  
-lagarto.
+lagarto :- nao_mamifero,
+	nao_listras,
+	nao_passaro,
+	nao_voa.
 
 /* regras de classificação */
 
 mamifero :- verify('É um mamífero?'), !.
+nao_mamifero :- verify_negation('É um mamífero?'), !.
 listras :- verify('Tem listras?'), !.
-passaro :- verify('É um pássaro?'), !.
+nao_listras :- verify_negation('Tem listras?'), !.
+passaro :- verify('É uma ave?'), !.
+nao_passaro :- verify_negation('É uma ave?'), !.
 voa :- verify('Ele voa?'), !.
+nao_voa :- verify_negation('Ele voa?'), !.
 
 /* perguntas */
 ask(Pergunta) :-
@@ -128,11 +141,11 @@ resposta_nao(Animal, NovoAnimal, NovaPergunta) :-
 	
 /* salva em disco a base de conhecimento */
 my_save(ToFile) :-
-       telling(Old),      /* current write output */
-       tell(ToFile),      /* open this file */ 
-       listing,           /* list all clauses in memory */ 
-       told,              /* close ToFile */ 
-       tell(Old).         /* resume this output */
+	telling(Old),      /* current write output */
+	tell(ToFile),      /* open this file */ 
+	listing,           /* list all clauses in memory */ 
+	told,              /* close ToFile */ 
+	tell(Old).         /* resume this output */
 
 /* limpar os asserts */
 undo :- retract(sim(_)), fail.

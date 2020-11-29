@@ -23,6 +23,7 @@ hipotese(zebra)	:- zebra, !.
 hipotese(leao)	:- leao, !.
 hipotese(aguia)	:- aguia, !.
 hipotese(pinguim)	:- pinguim, !.
+hipotese(mosquito) :- mosquito, !.
 hipotese(lagarto)	:- lagarto, !.
 
 hipotese(nao_encontrado).
@@ -52,13 +53,22 @@ pinguim :- nao_mamifero,
 	nao_listras,
 	passaro,
 	nao_voa.
+	
+:- dynamic mosquito/0.
+		  
+mosquito :- nao_mamifero,
+	nao_listras,
+	nao_passaro,
+	voa,
+	inseto.
 
 :- dynamic lagarto/0.
 		  
 lagarto :- nao_mamifero,
 	nao_listras,
 	nao_passaro,
-	nao_voa.
+	nao_voa,
+	nao_inseto.
 
 /* regras de classificação */
 
@@ -70,6 +80,8 @@ passaro :- verify('É uma ave?'), !.
 nao_passaro :- verify_negation('É uma ave?'), !.
 voa :- verify('Ele voa?'), !.
 nao_voa :- verify_negation('Ele voa?'), !.
+inseto :- verify('É inseto?'), !.
+nao_inseto :- verify_negation('É inseto?'), !.
 
 /* perguntas */
 ask(Pergunta) :-

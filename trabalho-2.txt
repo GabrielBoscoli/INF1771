@@ -1,19 +1,19 @@
 /* consult("C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-2.txt"). */
 
 go :- write('Bem-vindo ao jogo dos animais. Vou tentar adivinhar qual está pensando.'),
-		nl,
-		nl,
-		deducao,
-		my_save('C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-2.txt').
+	nl,
+	nl,
+	deducao,
+	my_save('C:/Users/Gabriel Boscoli/Documents/INF1771/trabalho-2.txt').
 
 deducao :- hipotese(Animal),
-		write('É um(a) '),
-		write(Animal),
-		write('? (s/n)'),
-    read(Resposta),
-		nl,
-		( (Resposta == sim ; Resposta == s) -> write('YAY! Adivinhei seu animal!') ; wrong(Animal) ),
-		undo.
+	write('É um(a) '),
+	write(Animal),
+	write('? (s/n)'),
+	read(Resposta),
+	nl,
+	( (Resposta == sim ; Resposta == s) -> write('YAY! Adivinhei seu animal!') ; wrong(Animal) ),
+	undo.
 
 
 /* hipoteses */

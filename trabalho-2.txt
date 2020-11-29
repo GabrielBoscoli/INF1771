@@ -36,27 +36,24 @@ zebra :- mamifero,
 			
 :- dynamic leao/0.
 		  
-leao :- nao_listras,
-	mamifero.
+leao :- mamifero,
+	nao_listras.
 
 :- dynamic aguia/0.
 
 aguia :- nao_mamifero,
-	nao_listras,
 	passaro,
 	voa.
 			
 :- dynamic pinguim/0.
 		  
 pinguim :- nao_mamifero,
-	nao_listras,
 	passaro,
 	nao_voa.
 
 :- dynamic lagarto/0.
 		  
 lagarto :- nao_mamifero,
-	nao_listras,
 	nao_passaro.
 
 /* regras de classificação */
